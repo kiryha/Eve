@@ -1,4 +1,7 @@
-# Eve
+# Eve: Out of the box Houdini Pipeline
+[![](https://live.staticflickr.com/65535/48087908673_fb38ed89fe_o.jpg)](https://live.staticflickr.com/65535/48087908673_fb38ed89fe_o.jpg)
+
+
 Restructured Eve pipeline for Houdini. Once complete, the code would be copied to kiryha/Houdini repo, 
 replacing the old one.
 
@@ -17,4 +20,4 @@ Release structure for Eve-0.0:
 ------------ pm (Project Manager)  
               
               
-Copy Eve folder from Eve-0.0 to the network drive.
+Download release, extract toi temp folder, copy Eve folder from Eve-0.0 to the network drive.
