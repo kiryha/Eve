@@ -1,18 +1,24 @@
 from PySide2 import QtCore
 
+
 # PySide Eve Data Model
 class Model(QtCore.QAbstractListModel):
     def __init__(self, data, parent=None):
         QtCore.QAbstractListModel.__init__(self, parent)
         self._data = data
+        # print 'Model [data] = ', self._data
 
     def rowCount(self, parent):
-        ''' How many items the model contains '''
+        """
+        How many items the model contains
+        """
 
         return len(self._data)
 
     def data(self, index, role):
-        ''' Handling each row data '''
+        """
+        Handling each row data
+        """
 
         if not index.isValid():
             return

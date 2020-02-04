@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_project_properties.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_project_properties.ui' applies.
 #
-# Created: Mon Dec 23 15:29:38 2019
+# Created: Tue Dec 24 13:05:54 2019
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!

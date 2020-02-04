@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Project</class>
- <widget class="QWidget" name="Project">
+ <class>Shot</class>
+ <widget class="QWidget" name="Shot">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>367</width>
-    <height>262</height>
+    <width>369</width>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Shot</string>
   </property>
-  <layout class="QVBoxLayout" name="shotLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QLabel" name="label_3">
+      <property name="minimumSize">
+       <size>
+        <width>120</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>85</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Project Name</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnProjectName">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+   </item>
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -31,48 +57,15 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>120</width>
+        <width>85</width>
         <height>16777215</height>
        </size>
       </property>
       <property name="text">
-       <string>Project Name</string>
+       <string>Shot Name</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="linProjectName">
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QSplitter" name="splitter_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QLabel" name="label_4">
-      <property name="minimumSize">
-       <size>
-        <width>120</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>120</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Project Location: </string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="linProjectLocation">
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="linShotName"/>
     </widget>
    </item>
    <item>
@@ -80,58 +73,23 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="label_7">
       <property name="minimumSize">
        <size>
         <width>120</width>
         <height>0</height>
        </size>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>120</width>
-        <height>16777215</height>
-       </size>
-      </property>
       <property name="text">
-       <string>Houdini Build</string>
+       <string>Start | End</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="linHoudini">
+     <widget class="QLineEdit" name="linStartFrame">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QSplitter" name="splitter_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QLabel" name="label_5">
-      <property name="minimumSize">
-       <size>
-        <width>120</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>120</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Project Resolution</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="linProjectWidth">
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="linProjectHeight">
+     <widget class="QLineEdit" name="linEndFrame">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
@@ -141,7 +99,46 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Project Description:</string>
+      <string>Linked Assets</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListView" name="listAssets"/>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QPushButton" name="btnLinkAsset">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Link Asset</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnUnlinkAsset">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Break Link</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Shot Description</string>
      </property>
     </widget>
    </item>

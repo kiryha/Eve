@@ -6,9 +6,9 @@ Restructured Eve pipeline for Houdini. Once complete, the code would be copied t
 replacing the old one.
 
 You need to have Python 2.7 with PySide2 in C:/Python27.  
-Get Python (https://drive.google.com/open?id=1jC4x2-Dcf5saixe9Z5aBu-kIMMaGEmtJ)
+[Get Python with PySide2](https://drive.google.com/open?id=1jC4x2-Dcf5saixe9Z5aBu-kIMMaGEmtJ)
 
-Release structure for Eve-0.0:  
+Release structure for Eve-#.#:  
   
 ---- Eve (root pipeline folder)  
 -------- project_manager.bat  

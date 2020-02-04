@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_pm_main.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_pm_main.ui' applies.
 #
-# Created: Mon Dec 23 16:16:12 2019
+# Created: Tue Feb 04 14:46:33 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_ProjectManager(object):
     def setupUi(self, ProjectManager):
         ProjectManager.setObjectName("ProjectManager")
-        ProjectManager.resize(854, 716)
+        ProjectManager.resize(655, 716)
         self.centralwidget = QtWidgets.QWidget(ProjectManager)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -88,7 +88,7 @@ class Ui_ProjectManager(object):
         self.horizontalLayout.addWidget(self.boxProperties)
         ProjectManager.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(ProjectManager)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 854, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 655, 21))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")

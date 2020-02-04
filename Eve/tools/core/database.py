@@ -1,74 +1,321 @@
 import sqlite3
 
+# Project resolution (width + height) - global resolution for all shots.
+# If SHOT has resolution - it is override for global resolution
 
 def init_database(connection, cursor):
-    '''
+    """
     Create database tables
     :return:
-    '''
+    """
 
+    # TYPES
+    cursor.execute('''CREATE TABLE asset_types (
+                    id integer primary key autoincrement,
+                    name text,
+                    description text
+                    )''')
+
+    cursor.execute('''CREATE TABLE file_types (
+                    id integer primary key autoincrement,
+                    name text,
+                    description text
+                    )''')
+
+    # MAIN ITEMS
     cursor.execute('''CREATE TABLE projects (
                     id integer primary key autoincrement,
                     name text,
                     houdini_build text,
+                    width integer,
+                    height integer,
                     description text
                     )''')
 
-    # cursor.execute('''CREATE TABLE assets (
-    #                 id integer primary key autoincrement,
-    #                 name text,
-    #                 project integer,
-    #                 description text
-    #                 )''')
-    #
-    # cursor.execute('''CREATE TABLE asset_publish (
-    #                 id integer primary key autoincrement,
-    #                 asset_name text,
-    #                 asset_id text,
-    #                 description text
-    #                 )''')
-    #
-    #
-    # cursor.execute('''CREATE TABLE shots (
-    #                 id integer primary key autoincrement,
-    #                 name text,
-    #                 project integer,
-    #                 linked_asset integer,
-    #                 start_frame integer,
-    #                 end_frame integer,
-    #                 width integer,
-    #                 height integer,
-    #                 description text
-    #                 )''')
+    cursor.execute('''CREATE TABLE assets (
+                    id integer primary key autoincrement,
+                    name text,
+                    project integer,
+                    type integer,
+                    description text,
+                    FOREIGN KEY(project) REFERENCES projects(id)
+                    FOREIGN KEY(type) REFERENCES asset_types(id)
+                    )''')
+
+    cursor.execute('''CREATE TABLE sequences (
+                    id integer primary key autoincrement,
+                    name text,
+                    project integer,
+                    description text,
+                    FOREIGN KEY(project) REFERENCES projects(id)
+                    )''')
+
+    cursor.execute('''CREATE TABLE shots (
+                    id integer primary key autoincrement,
+                    name text,
+                    sequence integer,
+                    start_frame integer,
+                    end_frame integer,
+                    width integer, 
+                    height integer,
+                    description text,
+                    FOREIGN KEY(sequence) REFERENCES sequences(id)
+                    )''')
+
+    # FILES
+    cursor.execute('''CREATE TABLE asset_files (
+                    id integer primary key autoincrement,
+                    type integer,
+                    asset integer,
+                    snapshot integer,
+                    description text,
+                    FOREIGN KEY(type) REFERENCES file_types(id)
+                    FOREIGN KEY(asset) REFERENCES assets(id)
+                    FOREIGN KEY(snapshot) REFERENCES asset_snapshots(id)
+                    )''')
+
+    cursor.execute('''CREATE TABLE shot_files (
+                    id integer primary key autoincrement,
+                    type integer,
+                    shot integer,
+                    snapshot integer,
+                    description text,
+                    FOREIGN KEY(type) REFERENCES file_types(id)
+                    FOREIGN KEY(shot) REFERENCES shots(id)
+                    FOREIGN KEY(snapshot) REFERENCES shot_snapshots(id)
+                    )''')
+
+    # LINKS
+    # Link assets to the shots
+    cursor.execute('''CREATE TABLE shot_assets (
+                    id integer primary key autoincrement,
+                    shot_id integer,
+                    asset_id integer
+                    )''')
+
+    # SNAPSHOTS
+    cursor.execute('''CREATE TABLE asset_snapshot (
+                    id integer primary key autoincrement,
+                    asset_name text,
+                    asset_id text,
+                    asset_version text,
+                    description text
+                    )''')
 
     connection.commit()
 
-def convert_to_project(project_tuples):
-    '''
-    Convert list of projects tuples to list of athena Project objects
-    :param project_tuples: list of tuples, project data: [(id, name, houdini, description)]
+
+def init_asset_types(connection, cursor):
+    """
+    Fill asset types table in the DB (character, environment, prop, FX)
+
+    :param connection:
+    :param cursor:
     :return:
-    '''
+    """
+
+    for name, data in Asset.asset_types.iteritems():
+        cursor.execute("INSERT INTO asset_types VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":description)",
+
+                       {'id': data['id'],
+                        'name': name,
+                        'description': data['description']})
+
+    connection.commit()
+
+
+def init_file_types(connection, cursor):
+    """
+    Fill file types table in the DB.
+
+    Any file used in Eve should has a particular type. Here is the full list of all possible types in Eve.
+
+    asset_hip:
+        Working scene for Assets. Here we store all source data to build an asset. Results are exported as caches,
+        and caches used in asset_hda files.
+
+    asset_hda:
+        Houdini Digital Asset for ASSETS. Used to load assets of any type (char, env, props, fx) into shots.
+        Contain cached data with interface. Source of cached data is stored in asset_hip
+
+    :param connection:
+    :param cursor:
+    :return:
+    """
+
+    for name, data in EveFile.file_types.iteritems():
+
+        cursor.execute("INSERT INTO file_types VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":description)",
+
+                       {'id': data['id'],
+                        'name': name,
+                        'description': data['description']})
+
+    connection.commit()
+
+
+def convert_to_project(project_tuples):
+    """
+    Convert list of projects tuples to list of Eve Project objects
+
+    :param project_tuples: list of tuples, project data: [(id, name, houdini_build, width, height, description)]
+    :return:
+    """
 
     projects = []
     for project_tuple in project_tuples:
         project = Project(project_tuple[1])
         project.id = project_tuple[0]
         project.houdini_build = project_tuple[2]
-        project.description = project_tuple[3]
+        project.width = project_tuple[3]
+        project.height = project_tuple[4]
+        project.description = project_tuple[5]
         projects.append(project)
 
     return projects
+
+
+def convert_to_asset(asset_tuples):
+    '''
+    Convert list of assets tuples to list of athena Asset objects
+    :param asset_tuples:  [(id, name, project, type, description)]
+    :return:
+    '''
+
+    assets = []
+
+    for asset_tuple in asset_tuples:
+        asset = Asset(asset_tuple[1], asset_tuple[2])
+        asset.id = asset_tuple[0]
+        asset.type = asset_tuple[3]
+        asset.description = asset_tuple[4]
+        assets.append(asset)
+
+    return assets
+
+
+def convert_to_asset_types(asset_types_tuples):
+    '''
+    Convert list of asset types tuples to list of Eve AssetType objects
+    :param asset_types_tuples: list of tuples, asset type data: [(id, name, description)]
+    :return:
+    '''
+
+    asset_types = []
+    for asset_types_tuple in asset_types_tuples:
+        asset_type = AssetType(asset_types_tuple[0], asset_types_tuple[1], asset_types_tuple[2])
+        asset_types.append(asset_type)
+
+    return asset_types
+
 
 class Project:
     def __init__(self, project_name):
         self.id = None
         self.name = project_name
-        self.houdini = ''
+        self.houdini_build = ''
+        self.width = ''
+        self.height = ''
         self.description = ''
 
 
-class Data:
+class Asset:
+
+    asset_types = {
+        'character':
+            {'id': 1,
+             'name': 'character',
+             'description': 'Character asset'},
+
+        'environment':
+            {'id': 2,
+             'name': 'environment',
+             'description': 'Environment asset'},
+
+        'prop':
+            {'id': 3,
+             'name': 'prop',
+             'description': 'Animated asset with rig'},
+
+        'static':
+            {'id': 4,
+             'name': 'static',
+             'description': 'Non animated asset'},
+
+        'fx':
+            {'id': 5,
+             'name': 'fx',
+             'description': 'FX asset'}}
+
+    def __init__(self, asset_name, project_id):
+        self.id = None
+        self.name = asset_name
+        self.project = project_id
+        self.type = None
+        self.description = ''
+
+
+class AssetType:
+    def __init__(self, id, name, description):
+        self.id = id
+        self.name = name
+        self.description = description
+
+
+class EveFile:
+
+    file_types = {
+        'asset_hip':
+            {'id': 1,
+             'name': 'asset_hip',
+             'prefix': '',
+             'description': 'Houdini working scene for assets'},
+
+        'asset_hda':
+            {'id': 2,
+             'name': 'asset_hda',
+             'prefix': '',
+             'description': 'Houdini digital asset for assets'},
+
+        'asset_fx':
+            {'id': 3,
+             'name': 'asset_hip',
+             'prefix': '',
+             'description': ''},
+
+        'shot_animation':
+            {'id': 4,
+             'name': 'asset_hip',
+             'prefix': '',
+             'description': ''},
+
+        'shot_render':
+            {'id': 5,
+             'name': 'asset_hip',
+             'prefix': '',
+             'description': ''},
+
+        'shot_fx':
+            {'id': 6,
+             'name': 'asset_hip',
+             'prefix': '',
+             'description': 'Houdini working scene for assets.'}}
+
+    def __init__(self, file_type_id, source_id):
+        self.id = None
+        self.type = file_type_id
+        self.source = source_id  # Source DB item id (asset, shot etc)
+        self.snapshot = None
+        self.description = ''
+
+
+class EveData:
     def __init__(self, SQL_FILE_PATH):
         # Load database
         self.SQL_FILE_PATH = SQL_FILE_PATH
@@ -77,6 +324,7 @@ class Data:
         # INTERNAL SET
         self.projects = []
         self.project_assets = []
+        self.asset_types = []
         self.project_sequences = []
         self.project_shots = []
         # EXTERNAL SET
@@ -84,16 +332,20 @@ class Data:
         self.selected_asset = None
         self.selected_sequences = None
         self.selected_shot = None
-        self.linked_asset = None
+        self.linked_assets = None
+        self.asset_type_string = None
 
         # Initialize data
         self.init_data()
 
     # UI
     def init_data(self):
-        ''' Populate data when create a Database instance '''
+        """
+        Populate data when create a EveData instance
+        """
 
         self.get_projects()
+        self.get_asset_types()
 
     # CRUD
     # Project
@@ -107,11 +359,15 @@ class Data:
                        ":id,"
                        ":name,"
                        ":houdini_build,"
+                       ":width,"
+                       ":height,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
                         'name': project.name,
                         'houdini_build': project.houdini_build,
+                        'width': project.width,
+                        'height': project.height,
                         'description': project.description})
 
         connection.commit()
@@ -166,3 +422,178 @@ class Data:
         connection.close()
 
         self.projects.extend(project_objects)
+
+    def update_project(self, project):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE projects SET "
+                       "houdini_build=:houdini_build,"
+                       "width=:width,"
+                       "height=:height,"
+                       "description=:description "
+
+                       "WHERE id=:id",
+
+                       {'id': project.id,
+                        'houdini_build': project.houdini_build,
+                        'width': project.width,
+                        'height': project.height,
+                        'description': project.description})
+
+        connection.commit()
+        connection.close()
+
+        self.selected_project = project
+
+    def del_project(self, project_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM projects WHERE id=:id",
+                       {'id': project_id})
+
+        connection.commit()
+        connection.close()
+
+        for project in self.projects:
+            if project.id == project_id:
+                self.projects.remove(project)
+
+    # Assets
+    def add_asset(self, asset, project_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO assets VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":project,"
+                       ":type,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'name': asset.name,
+                        'project': project_id,
+                        'type': asset.type,
+                        'description': asset.description})
+
+        connection.commit()
+        asset.id = cursor.lastrowid  # Add database ID to the asset object
+        connection.close()
+
+        self.project_assets.append(asset)
+
+    def get_asset(self, asset_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM assets WHERE id=:id",
+                       {'id': asset_id})
+
+        asset_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if asset_tuple:
+            return convert_to_asset([asset_tuple])[0]
+
+    def get_asset_by_name(self, project_id, asset_name):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM assets WHERE "
+                       "name=:name "
+                       "AND project=:project",
+
+                       {'name': asset_name,
+                        'project': project_id})
+
+        asset_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if asset_tuple:
+            return convert_to_asset([asset_tuple])[0]
+
+    def get_project_assets(self, project):
+        ''' Get all project assets from assets table in db '''
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM assets WHERE project=:project",
+                       {'project': project.id})
+
+        asset_tuples = cursor.fetchall()
+        asset_objects = convert_to_asset(asset_tuples)
+
+        connection.close()
+
+        # Clear list and append assets
+        del self.project_assets[:]
+        for asset in asset_objects:
+            self.project_assets.append(asset)
+
+    def get_asset_types(self):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM asset_types")
+        asset_types_tuples = cursor.fetchall()
+        asset_types_objects = convert_to_asset_types(asset_types_tuples)
+
+        connection.close()
+
+        self.asset_types.extend(asset_types_objects)
+
+    def get_asset_type_string(self, asset_type_id):
+        """
+        Get asset type name by asset type id in Asset.asset_types dictionary
+        :return:
+        """
+
+        for name, data in Asset.asset_types.iteritems():
+            if data['id'] == asset_type_id:
+                self.asset_type_string = name
+
+    def update_asset(self, asset):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE assets SET "
+                       "project=:project,"
+                       "type=:type,"
+                       "description=:description "
+
+                       "WHERE id=:id",
+
+                       {'id': asset.id,
+                        'project': asset.project,
+                        'type': asset.type,
+                        'description': asset.description})
+
+        connection.commit()
+        connection.close()
+
+    def del_asset(self, asset_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM assets WHERE id=:id",
+                       {'id': asset_id})
+
+        connection.commit()
+        connection.close()
+
+        for asset in self.project_assets:
+            if asset.id == asset_id:
+                self.project_assets.remove(asset)

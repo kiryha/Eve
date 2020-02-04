@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-def get_HDA(root_3d):
+def get_hda_path(root_3d):
     '''
     Build HOUDINI_OTLSCAN_PATH env variable value:
     Get all subfolders of HDA location dirs (hda and lib/materials) and combine to one string
@@ -52,6 +52,9 @@ def run(eve_root, projects_root, HOUDINI, project_name):
     print eve_root, projects_root, HOUDINI, project_name
 
     # SETUP PROJECT ENVIRONMENT
+    # ACES (Download from imageworks github OpenColorIO-Confih repo)
+    os.environ['OCIO'] = '{}/OCIO/Aces1.0.3/config.ocio'.format(eve_root)
+
     root_3d = '{0}/{1}/PROD/3D'.format(projects_root, project_name)
     project_root = '{0}/{1}'.format(projects_root, project_name)
     # Eve location ('E:/Eve')
@@ -64,7 +67,7 @@ def run(eve_root, projects_root, HOUDINI, project_name):
     os.environ['JOB'] = root_3d
 
     # Houdini digital assets folder including sub folders
-    # os.environ['HOUDINI_OTLSCAN_PATH'] = get_HDA(root_3d)
+    # os.environ['HOUDINI_OTLSCAN_PATH'] = get_hda_path(root_3d)
     # Houdini path
     os.environ['HOUDINI_PATH'] = '{0}/tools/houdini/settings;&'.format(eve_root)
     # Path to custom python tools
