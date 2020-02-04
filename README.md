@@ -20,4 +20,4 @@ Release structure for Eve-#.#:
 ------------ pm (Project Manager)  
               
               
-Download release, extract toi temp folder, copy Eve folder from Eve-0.0 to the network drive.
+Download release, extract to the temp folder, copy Eve folder from Eve-0.0 to the network drive.

@@ -3,4 +3,4 @@
 # Database
 Eve/data
 # UI compiler
-Eve/compile_ui.bat
+compile_ui.bat
