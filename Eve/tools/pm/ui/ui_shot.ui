@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>369</width>
-    <height>356</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>85</width>
+        <width>120</width>
         <height>16777215</height>
        </size>
       </property>
@@ -36,9 +36,44 @@
        <string>Project Name</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btnProjectName">
+     <widget class="QLineEdit" name="linProjectName">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QLabel" name="label_5">
+      <property name="minimumSize">
+       <size>
+        <width>120</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="text">
-       <string/>
+       <string>Sequence Name</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="linSequenceName">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
@@ -65,7 +100,11 @@
        <string>Shot Name</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="linShotName"/>
+     <widget class="QLineEdit" name="linShotName">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>
@@ -90,6 +129,34 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="linEndFrame">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter_6">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QLabel" name="label_8">
+      <property name="minimumSize">
+       <size>
+        <width>120</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Width | Height</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="linWidth">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="linHeight">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>

@@ -40,6 +40,9 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="linProjectName">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
@@ -123,6 +126,9 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="linAssetPublish">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>

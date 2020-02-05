@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_shot.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_shot.ui' applies.
 #
-# Created: Tue Dec 24 10:44:09 2019
+# Created: Wed Feb 05 14:22:52 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Shot(object):
     def setupUi(self, Shot):
         Shot.setObjectName("Shot")
-        Shot.resize(369, 356)
+        Shot.resize(369, 425)
         self.verticalLayout = QtWidgets.QVBoxLayout(Shot)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter_3 = QtWidgets.QSplitter(Shot)
@@ -21,12 +21,25 @@ class Ui_Shot(object):
         self.splitter_3.setObjectName("splitter_3")
         self.label_3 = QtWidgets.QLabel(self.splitter_3)
         self.label_3.setMinimumSize(QtCore.QSize(120, 0))
-        self.label_3.setMaximumSize(QtCore.QSize(85, 16777215))
+        self.label_3.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label_3.setObjectName("label_3")
-        self.btnProjectName = QtWidgets.QPushButton(self.splitter_3)
-        self.btnProjectName.setText("")
-        self.btnProjectName.setObjectName("btnProjectName")
+        self.linProjectName = QtWidgets.QLineEdit(self.splitter_3)
+        self.linProjectName.setEnabled(False)
+        self.linProjectName.setAlignment(QtCore.Qt.AlignCenter)
+        self.linProjectName.setObjectName("linProjectName")
         self.verticalLayout.addWidget(self.splitter_3)
+        self.splitter_4 = QtWidgets.QSplitter(Shot)
+        self.splitter_4.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_4.setObjectName("splitter_4")
+        self.label_5 = QtWidgets.QLabel(self.splitter_4)
+        self.label_5.setMinimumSize(QtCore.QSize(120, 0))
+        self.label_5.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.label_5.setObjectName("label_5")
+        self.linSequenceName = QtWidgets.QLineEdit(self.splitter_4)
+        self.linSequenceName.setEnabled(False)
+        self.linSequenceName.setAlignment(QtCore.Qt.AlignCenter)
+        self.linSequenceName.setObjectName("linSequenceName")
+        self.verticalLayout.addWidget(self.splitter_4)
         self.splitter = QtWidgets.QSplitter(Shot)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
@@ -35,6 +48,7 @@ class Ui_Shot(object):
         self.label.setMaximumSize(QtCore.QSize(85, 16777215))
         self.label.setObjectName("label")
         self.linShotName = QtWidgets.QLineEdit(self.splitter)
+        self.linShotName.setAlignment(QtCore.Qt.AlignCenter)
         self.linShotName.setObjectName("linShotName")
         self.verticalLayout.addWidget(self.splitter)
         self.splitter_5 = QtWidgets.QSplitter(Shot)
@@ -50,6 +64,19 @@ class Ui_Shot(object):
         self.linEndFrame.setAlignment(QtCore.Qt.AlignCenter)
         self.linEndFrame.setObjectName("linEndFrame")
         self.verticalLayout.addWidget(self.splitter_5)
+        self.splitter_6 = QtWidgets.QSplitter(Shot)
+        self.splitter_6.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_6.setObjectName("splitter_6")
+        self.label_8 = QtWidgets.QLabel(self.splitter_6)
+        self.label_8.setMinimumSize(QtCore.QSize(120, 0))
+        self.label_8.setObjectName("label_8")
+        self.linWidth = QtWidgets.QLineEdit(self.splitter_6)
+        self.linWidth.setAlignment(QtCore.Qt.AlignCenter)
+        self.linWidth.setObjectName("linWidth")
+        self.linHeight = QtWidgets.QLineEdit(self.splitter_6)
+        self.linHeight.setAlignment(QtCore.Qt.AlignCenter)
+        self.linHeight.setObjectName("linHeight")
+        self.verticalLayout.addWidget(self.splitter_6)
         self.label_2 = QtWidgets.QLabel(Shot)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
@@ -82,8 +109,10 @@ class Ui_Shot(object):
     def retranslateUi(self, Shot):
         Shot.setWindowTitle(QtWidgets.QApplication.translate("Shot", "Shot", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("Shot", "Project Name", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("Shot", "Sequence Name", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("Shot", "Shot Name", None, -1))
         self.label_7.setText(QtWidgets.QApplication.translate("Shot", "Start | End", None, -1))
+        self.label_8.setText(QtWidgets.QApplication.translate("Shot", "Width | Height", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("Shot", "Linked Assets", None, -1))
         self.btnLinkAsset.setText(QtWidgets.QApplication.translate("Shot", "Link Asset", None, -1))
         self.btnUnlinkAsset.setText(QtWidgets.QApplication.translate("Shot", "Break Link", None, -1))

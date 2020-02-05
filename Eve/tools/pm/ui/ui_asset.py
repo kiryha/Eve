@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_asset.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_asset.ui' applies.
 #
-# Created: Tue Feb 04 14:22:20 2020
+# Created: Wed Feb 05 14:00:51 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,6 +25,7 @@ class Ui_Asset(object):
         self.label_5.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label_5.setObjectName("label_5")
         self.linProjectName = QtWidgets.QLineEdit(self.splitter_4)
+        self.linProjectName.setEnabled(False)
         self.linProjectName.setAlignment(QtCore.Qt.AlignCenter)
         self.linProjectName.setObjectName("linProjectName")
         self.shotLayout.addWidget(self.splitter_4)
@@ -57,6 +58,7 @@ class Ui_Asset(object):
         self.label_6.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label_6.setObjectName("label_6")
         self.linAssetPublish = QtWidgets.QLineEdit(self.splitter_5)
+        self.linAssetPublish.setEnabled(False)
         self.linAssetPublish.setAlignment(QtCore.Qt.AlignCenter)
         self.linAssetPublish.setObjectName("linAssetPublish")
         self.shotLayout.addWidget(self.splitter_5)

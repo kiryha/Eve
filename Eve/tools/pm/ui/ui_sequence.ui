@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QSplitter" name="splitter_3">
+    <widget class="QSplitter" name="splitter_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -39,9 +39,12 @@
        <string>Project Name</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btnProjectName">
-      <property name="text">
-       <string/>
+     <widget class="QLineEdit" name="linProjectName">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
@@ -68,7 +71,11 @@
        <string>Sequence Name</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="linSequenceName"/>
+     <widget class="QLineEdit" name="linSequenceName">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>

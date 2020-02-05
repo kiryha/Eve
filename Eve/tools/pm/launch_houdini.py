@@ -2,20 +2,20 @@ import os
 import subprocess
 
 def get_hda_path(root_3d):
-    '''
+    """
     Build HOUDINI_OTLSCAN_PATH env variable value:
     Get all subfolders of HDA location dirs (hda and lib/materials) and combine to one string
     Used by Houdini to search for HDA (Houdini Digital Assets)
-    '''
+    """
 
     filterFolders = ['backup']
 
 
     def combinePaths(listPaths):
-        '''
+        """
         Combine paths string from list of paths
         :param listPaths: list of subfolders in processed folder
-        '''
+        """
 
         pathHDA = ''
 

@@ -3,6 +3,7 @@ import sqlite3
 # Project resolution (width + height) - global resolution for all shots.
 # If SHOT has resolution - it is override for global resolution
 
+
 def init_database(connection, cursor):
     """
     Create database tables
@@ -182,11 +183,11 @@ def convert_to_project(project_tuples):
 
 
 def convert_to_asset(asset_tuples):
-    '''
+    """
     Convert list of assets tuples to list of athena Asset objects
     :param asset_tuples:  [(id, name, project, type, description)]
     :return:
-    '''
+    """
 
     assets = []
 
@@ -200,12 +201,52 @@ def convert_to_asset(asset_tuples):
     return assets
 
 
+def convert_to_sequence(sequence_tuples):
+    """
+    Convert list of sequence tuples to list of athena Sequence objects
+    :param sequence_tuples:  [(id, name, project, description)]
+    :return:
+    """
+
+    sequences = []
+
+    for sequence_tuple in sequence_tuples:
+        sequence = Sequence(sequence_tuple[1], sequence_tuple[2])
+        sequence.id = sequence_tuple[0]
+        sequence.description = sequence_tuple[3]
+        sequences.append(sequence)
+
+    return sequences
+
+
+def convert_to_shot(shot_tuples):
+    """
+    Convert list of shot tuples to list of athena Shot objects
+    :param shot_tuples:  [(id, name, sequence, start_frame, end_frame, width, height, description)]
+    :return:
+    """
+
+    shots = []
+
+    for shot_tuple in shot_tuples:
+        shot = Shot(shot_tuple[1], shot_tuple[2])
+        shot.id = shot_tuple[0]
+        shot.start_frame = shot_tuple[3]
+        shot.end_frame = shot_tuple[4]
+        shot.width = shot_tuple[5]
+        shot.height = shot_tuple[6]
+        shot.description = shot_tuple[7]
+        shots.append(shot)
+
+    return shots
+
+
 def convert_to_asset_types(asset_types_tuples):
-    '''
+    """
     Convert list of asset types tuples to list of Eve AssetType objects
     :param asset_types_tuples: list of tuples, asset type data: [(id, name, description)]
     :return:
-    '''
+    """
 
     asset_types = []
     for asset_types_tuple in asset_types_tuples:
@@ -258,6 +299,26 @@ class Asset:
         self.name = asset_name
         self.project = project_id
         self.type = None
+        self.description = ''
+
+
+class Sequence:
+    def __init__(self, sequence_name, project_id):
+        self.id = None
+        self.name = sequence_name
+        self.project = project_id
+        self.description = ''
+
+
+class Shot:
+    def __init__(self, shot_name, sequence_id):
+        self.id = None
+        self.name = shot_name
+        self.sequence = sequence_id
+        self.start_frame = ''
+        self.end_frame = ''
+        self.width = ''
+        self.height = ''
         self.description = ''
 
 
@@ -326,7 +387,7 @@ class EveData:
         self.project_assets = []
         self.asset_types = []
         self.project_sequences = []
-        self.project_shots = []
+        self.sequence_shots = []
         # EXTERNAL SET
         self.selected_project = None
         self.selected_asset = None
@@ -378,7 +439,7 @@ class EveData:
         self.projects.append(project)
 
     def get_project(self, project_id):
-        ''' Get project by id '''
+        """ Get project by id """
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
@@ -394,7 +455,7 @@ class EveData:
             return project_object
 
     def get_project_by_name(self, project_name):
-        ''' Get project by id '''
+        """ Get project by id """
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
@@ -410,7 +471,7 @@ class EveData:
             return project_object
 
     def get_projects(self):
-        ''' Get all project items from projects table in db '''
+        """ Get all project items from projects table in db """
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
@@ -422,6 +483,65 @@ class EveData:
         connection.close()
 
         self.projects.extend(project_objects)
+
+    def get_project_assets(self, project):
+        """ Get all project assets from assets table in db """
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM assets WHERE project=:project",
+                       {'project': project.id})
+
+        asset_tuples = cursor.fetchall()
+        asset_objects = convert_to_asset(asset_tuples)
+
+        connection.close()
+
+        # Clear list and append assets
+        del self.project_assets[:]
+        for asset in asset_objects:
+            self.project_assets.append(asset)
+
+    def get_project_sequences(self, project):
+        """ Get all project sequences from sequences table in db """
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM sequences WHERE project=:project",
+                       {'project': project.id})
+
+        sequence_tuples = cursor.fetchall()
+        sequence_objects = convert_to_sequence(sequence_tuples)
+
+        connection.close()
+
+        # Clear list and append assets
+        del self.project_sequences[:]
+        for sequence in sequence_objects:
+            self.project_sequences.append(sequence)
+
+    def get_sequence_shots(self, sequence_id):
+        """
+        Get all sequence shots from shots table in db
+        """
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM shots WHERE sequence=:sequence",
+                       {'sequence': sequence_id})
+
+        shot_tuples = cursor.fetchall()
+        shot_objects = convert_to_shot(shot_tuples)
+
+        connection.close()
+
+        # Clear list and append assets
+        del self.sequence_shots[:]
+        for shot in shot_objects:
+            self.sequence_shots.append(shot)
 
     def update_project(self, project):
 
@@ -521,25 +641,6 @@ class EveData:
         if asset_tuple:
             return convert_to_asset([asset_tuple])[0]
 
-    def get_project_assets(self, project):
-        ''' Get all project assets from assets table in db '''
-
-        connection = sqlite3.connect(self.SQL_FILE_PATH)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM assets WHERE project=:project",
-                       {'project': project.id})
-
-        asset_tuples = cursor.fetchall()
-        asset_objects = convert_to_asset(asset_tuples)
-
-        connection.close()
-
-        # Clear list and append assets
-        del self.project_assets[:]
-        for asset in asset_objects:
-            self.project_assets.append(asset)
-
     def get_asset_types(self):
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
@@ -583,6 +684,18 @@ class EveData:
         connection.commit()
         connection.close()
 
+        self.selected_asset = asset
+
+    def link_asset(self, asset_id, shot_id):
+        """
+        Link asset to the shot
+        :param asset_id:
+        :param shot_id:
+        :return:
+        """
+
+        pass
+
     def del_asset(self, asset_id):
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
@@ -597,3 +710,163 @@ class EveData:
         for asset in self.project_assets:
             if asset.id == asset_id:
                 self.project_assets.remove(asset)
+
+    # Sequence
+    def add_sequence(self, sequence, project_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO sequences VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":project,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'name': sequence.name,
+                        'project': project_id,
+                        'description': sequence.description})
+
+        connection.commit()
+        sequence.id = cursor.lastrowid  # Add database ID to the sequence object
+        connection.close()
+
+        self.project_sequences.append(sequence)
+
+    def get_sequence(self, sequence_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM sequences WHERE id=:id",
+                       {'id': sequence_id})
+
+        sequence_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if sequence_tuple:
+            return convert_to_sequence([sequence_tuple])[0]
+
+    def update_sequence(self, sequence):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE sequences SET "
+                       "description=:description "
+
+                       "WHERE id=:id",
+
+                       {'id': sequence.id,
+                        'description': sequence.description})
+
+        connection.commit()
+        connection.close()
+
+        self.selected_sequences = sequence
+
+    def del_sequence(self, sequence_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM sequences WHERE id=:id",
+                       {'id': sequence_id})
+
+        connection.commit()
+        connection.close()
+
+        for sequence in self.project_sequences:
+            if sequence.id == sequence_id:
+                self.project_sequences.remove(sequence)
+
+    # Shot
+    def add_shot(self, shot, sequence_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO shots VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":sequence,"
+                       ":start_frame,"
+                       ":end_frame,"
+                       ":width,"
+                       ":height,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'name': shot.name,
+                        'sequence': sequence_id,
+                        'start_frame': shot.start_frame,
+                        'end_frame': shot.end_frame,
+                        'width': shot.width,
+                        'height': shot.height,
+                        'description': shot.description})
+
+        connection.commit()
+        shot.id = cursor.lastrowid  # Add database ID to the shot object
+        connection.close()
+
+        self.sequence_shots.append(shot)
+
+    def get_shot(self, sequence_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM shots WHERE id=:id",
+                       {'id': sequence_id})
+
+        shot_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if shot_tuple:
+            return convert_to_shot([shot_tuple])[0]
+
+    def update_shot(self, shot):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE shots SET "
+                       "sequence=:sequence,"
+                       "start_frame=:start_frame,"
+                       "end_frame=:end_frame,"
+                       "width=:width,"
+                       "height=:height,"
+                       "description=:description "
+
+                       "WHERE id=:id",
+
+                       {'id': shot.id,
+                        'sequence': shot.sequence,
+                        'start_frame': shot.start_frame,
+                        'end_frame': shot.end_frame,
+                        'width': shot.width,
+                        'height': shot.height,
+                        'description': shot.description})
+
+        connection.commit()
+        connection.close()
+
+        self.selected_shot = shot
+
+    def del_shot(self, shot_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM shots WHERE id=:id",
+                       {'id': shot_id})
+
+        connection.commit()
+        connection.close()
+
+        for shot in self.sequence_shots:
+            if shot.id == shot_id:
+                self.sequence_shots.remove(shot)
