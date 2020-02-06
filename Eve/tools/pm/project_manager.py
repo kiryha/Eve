@@ -619,10 +619,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.eve_data.selected_asset = asset
 
         # Fill ASSET WIDGET
-        self.asset_properties_ui.asset_ui.linProjectName.setText(self.eve_data.selected_project.name)
-        self.asset_properties_ui.asset_ui.linProjectName.setEnabled(False)
-        self.asset_properties_ui.asset_ui.linAssetName.setText(asset.name)
         self.asset_properties_ui.asset_ui.linAssetName.setEnabled(False)
+        self.asset_properties_ui.asset_ui.linProjectName.setText(self.eve_data.selected_project.name)
+        self.asset_properties_ui.asset_ui.linAssetName.setText(asset.name)
 
         model_asset_types = Model(self.eve_data.asset_types)
         self.asset_properties_ui.asset_ui.comAssetType.setModel(model_asset_types)
@@ -654,9 +653,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.listShots.setModel(self.model_shots)
 
         # Fill SEQUENCE WIDGET
+        self.sequence_properties_ui.sequence_ui.linSequenceName.setEnabled(False)
         self.sequence_properties_ui.sequence_ui.linProjectName.setText(self.eve_data.selected_project.name)
         self.sequence_properties_ui.sequence_ui.linSequenceName.setText(sequence.name)
-        self.sequence_properties_ui.sequence_ui.linSequenceName.setEnabled(False)
         self.sequence_properties_ui.sequence_ui.txtDescription.setText(sequence.description)
 
     def init_shot(self):
@@ -675,13 +674,14 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         shot_id = model_index.data(QtCore.Qt.UserRole + 1)
         shot = self.eve_data.get_shot(shot_id)
         self.eve_data.selected_shot = shot
-        self.eve_data.get_shot_assets(shot_id)
 
         # FILL SHOT ASSETS WIDGET
+        self.eve_data.get_shot_assets(shot_id)
         self.model_shot_assets = Model(self.eve_data.shot_assets)
         self.shot_properties_ui.shot_ui.listAssets.setModel(self.model_shot_assets)
 
         # Fill SHOT WIDGET
+        self.shot_properties_ui.shot_ui.linShotName.setEnabled(False)
         self.shot_properties_ui.shot_ui.linProjectName.setText(self.eve_data.selected_project.name)
         self.shot_properties_ui.shot_ui.linSequenceName.setText(self.eve_data.selected_sequence.name)
         self.shot_properties_ui.shot_ui.linShotName.setText(self.eve_data.selected_shot.name)
@@ -771,41 +771,29 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         Delete shot from database, update UI
         """
 
-        model_index = self.listAssets.currentIndex()
-        asset_id = model_index.data(QtCore.Qt.UserRole + 1)
-        asset_name = model_index.data(QtCore.Qt.UserRole + 2)
-
         # Notify user about delete
-        WARN = Warnings(asset_name)
-        if WARN.exec_():
+        warning = Warnings(self.eve_data.selected_asset.name)
+        if warning.exec_():
             self.model_assets.layoutAboutToBeChanged.emit()
-            self.eve_data.del_asset(asset_id)
+            self.eve_data.del_asset(self.eve_data.selected_asset.id)
             self.model_assets.layoutChanged.emit()
 
     def del_sequence(self):
 
-        model_index = self.listSequences.currentIndex()
-        sequence_id = model_index.data(QtCore.Qt.UserRole + 1)
-        sequence_name = model_index.data(QtCore.Qt.UserRole + 2)
-
         # Notify user about delete
-        WARN = Warnings(sequence_name)
-        if WARN.exec_():
+        warning = Warnings(self.eve_data.selected_sequence.name)
+        if warning.exec_():
             self.model_sequences.layoutAboutToBeChanged.emit()
-            self.eve_data.del_sequence(sequence_id)
+            self.eve_data.del_sequence(self.eve_data.selected_sequence.id)
             self.model_sequences.layoutChanged.emit()
 
     def del_shot(self):
 
-        model_index = self.listShots.currentIndex()
-        shot_id = model_index.data(QtCore.Qt.UserRole + 1)
-        shot_name = model_index.data(QtCore.Qt.UserRole + 2)
-
         # Notify user about delete
-        WARN = Warnings(shot_name)
-        if WARN.exec_():
+        warning = Warnings(self.eve_data.selected_shot.name)
+        if warning.exec_():
             self.model_shots.layoutAboutToBeChanged.emit()
-            self.eve_data.del_shot(shot_id)
+            self.eve_data.del_shot(self.eve_data.selected_shot.id)
             self.model_shots.layoutChanged.emit()
 
     def update_project(self):

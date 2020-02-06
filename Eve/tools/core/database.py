@@ -690,11 +690,18 @@ class EveData:
 
     def del_asset(self, asset_id):
 
+
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
 
+        # Delete ASSET
         cursor.execute("DELETE FROM assets WHERE id=:id",
                        {'id': asset_id})
+
+        # Delete asset LINK
+        cursor.execute("DELETE FROM shot_assets WHERE asset_id=:asset_id",
+
+                       {'asset_id': asset_id})
 
         connection.commit()
         connection.close()
@@ -822,6 +829,9 @@ class EveData:
 
     def get_shot_assets(self, shot_id):
 
+        # Clear shot_assets list
+        del self.shot_assets[:]
+
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
 
@@ -833,8 +843,7 @@ class EveData:
         connection.close()
 
         if link_tuples:
-            # Clear shot_assets list and append assets
-            del self.shot_assets[:]
+            # Append assets
             for link_tuple in link_tuples:
                 self.shot_assets.append(self.get_asset(link_tuple[2]))
 
