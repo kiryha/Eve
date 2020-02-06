@@ -91,7 +91,9 @@ def init_database(connection, cursor):
     cursor.execute('''CREATE TABLE shot_assets (
                     id integer primary key autoincrement,
                     shot_id integer,
-                    asset_id integer
+                    asset_id integer,
+                    FOREIGN KEY(shot_id) REFERENCES shots(id)
+                    FOREIGN KEY(asset_id) REFERENCES assets(id)
                     )''')
 
     # SNAPSHOTS
