@@ -390,12 +390,12 @@ class EveData:
         self.asset_types = []
         self.project_sequences = []
         self.sequence_shots = []
+        self.shot_assets = []
         # EXTERNAL SET
         self.selected_project = None
         self.selected_asset = None
         self.selected_sequences = None
         self.selected_shot = None
-        self.linked_assets = None
         self.asset_type_string = None
 
         # Initialize data
@@ -688,16 +688,6 @@ class EveData:
 
         self.selected_asset = asset
 
-    def link_asset(self, asset_id, shot_id):
-        """
-        Link asset to the shot
-        :param asset_id:
-        :param shot_id:
-        :return:
-        """
-
-        pass
-
     def del_asset(self, asset_id):
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
@@ -830,6 +820,24 @@ class EveData:
         if shot_tuple:
             return convert_to_shot([shot_tuple])[0]
 
+    def get_shot_assets(self, shot_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM shot_assets WHERE shot_id=:shot_id",
+                       {'shot_id': shot_id})
+
+        link_tuples = cursor.fetchall()
+
+        connection.close()
+
+        if link_tuples:
+            # Clear shot_assets list and append assets
+            del self.shot_assets[:]
+            for link_tuple in link_tuples:
+                self.shot_assets.append(self.get_asset(link_tuple[2]))
+
     def update_shot(self, shot):
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
@@ -872,3 +880,50 @@ class EveData:
         for shot in self.sequence_shots:
             if shot.id == shot_id:
                 self.sequence_shots.remove(shot)
+
+    def link_asset(self, asset_id, shot_id):
+        """
+        Link asset to the shot
+        """
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        # Check if the asset link exists:
+        cursor.execute("SELECT * FROM shot_assets WHERE asset_id=:asset_id AND shot_id=:shot_id",
+
+                       {'asset_id': asset_id, 'shot_id': shot_id})
+
+        if cursor.fetchone():
+            connection.close()
+            return
+
+        cursor.execute("INSERT INTO shot_assets VALUES ("
+                       ":id,"
+                       ":shot_id,"
+                       ":asset_id)",
+
+                       {'id': cursor.lastrowid,
+                        'shot_id': shot_id,
+                        'asset_id': asset_id})
+
+        connection.commit()
+        connection.close()
+        return True
+
+    def unlink_asset(self, asset_id, shot_id):
+
+        connection = sqlite3.connect(self.SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM shot_assets WHERE asset_id=:asset_id AND shot_id=:shot_id",
+
+                       {'asset_id': asset_id, 'shot_id': shot_id})
+
+        connection.commit()
+        connection.close()
+
+        for asset in self.shot_assets:
+            if asset.id == asset_id:
+                self.shot_assets.remove(asset)
+

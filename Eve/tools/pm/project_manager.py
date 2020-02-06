@@ -6,6 +6,7 @@ from PySide2 import QtCore, QtWidgets
 
 # Import UI
 from ui import ui_pm_warning
+from ui import ui_link_assets
 from ui import ui_pm_main
 from ui import ui_project
 from ui import ui_project_properties
@@ -123,6 +124,47 @@ class Warnings(QtWidgets.QDialog, ui_pm_warning.Ui_Warning):
 
         message = 'Delete {}?'.format(name)
         self.labWarning.setText(message)
+
+
+class LinkAssets(QtWidgets.QDialog, ui_link_assets.Ui_LinkAssets):
+    """
+    Create asset entity in the database
+    """
+    def __init__(self, parent=None):
+        # SETUP UI WINDOW
+        super(LinkAssets, self).__init__(parent=parent)
+        self.setupUi(self)
+        # Add shot properties widget
+        self.parent = parent
+
+        self.shot = None
+        self.project_assets = None
+        self.model_assets = None
+
+        self.btnLinkAssets.clicked.connect(self.link_asset)
+        self.btnLinkAssets.clicked.connect(self.close)
+
+    def showEvent(self, event):
+        """
+        Executed when AddProject class is shown (AddProject.show())
+        """
+
+        # Clean UI
+        self.linShotName.setText(self.shot.name)
+        # self.asset_ui.linAssetName.clear()
+        # self.asset_ui.txtDescription.clear()
+        #
+        # Add assets to ui
+        self.model_assets = Model(self.project_assets)
+        self.listAssets.setModel(self.model_assets)
+
+    def link_asset(self):
+        """
+        Link assets to the shots
+        """
+
+        model_indexes = self.listAssets.selectedIndexes()
+        self.parent.link_assets(model_indexes, self.shot)
 
 
 class ProjectUI(QtWidgets.QWidget, ui_project.Ui_Project):
@@ -351,6 +393,8 @@ class AddShot(QtWidgets.QDialog, ui_pm_add_shot.Ui_AddShot):
         Executed when AddShot class is shown (AddShot.show())
         """
 
+        self.shot_ui.btnLinkAsset.setEnabled(False)
+        self.shot_ui.btnUnlinkAsset.setEnabled(False)
         self.shot_ui.linProjectName.setText(self.project.name)
         self.shot_ui.linSequenceName.setText(self.sequence.name)
         self.shot_ui.linShotName.clear()
@@ -403,8 +447,6 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.btn_project_create = 'Create Project'
         self.btn_project_update = 'Update Project'
 
-        # HIDE LIBRARY (until we implement functionality for the libraries)
-        self.boxLibrary.hide()
 
         # SETUP ENVIRONMENT
         os.environ['EVE_ROOT'] = os.environ['EVE_ROOT'].replace('\\', '/')
@@ -422,12 +464,14 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.model_assets = None
         self.model_sequences = None
         self.model_shots = None
+        self.model_shot_assets = None
 
         # Load ADD ENTITY classes
         self.AP = AddProject(self)
         self.AA = AddAsset(self)
         self.AE = AddSequence(self)
         self.AS = AddShot(self)
+        self.LA = LinkAssets(self)
 
         # Fill UI with data from database
         self.init_pm()
@@ -464,6 +508,8 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # Shot properties
         self.shot_properties_ui.btnUpdateShot.clicked.connect(self.update_shot)
+        self.shot_properties_ui.shot_ui.btnLinkAsset.clicked.connect(self.run_link_assets)
+        self.shot_properties_ui.shot_ui.btnUnlinkAsset.clicked.connect(self.run_unlink_assets)
 
     def docs(self):
         """
@@ -504,6 +550,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.listProjects.setModel(self.model_projects)
 
     def init_project(self):
+        """
+        When PROJECT selected in UI
+        """
 
         # Show and set up PROPERTIES widget
         self.project_properties_ui.show()
@@ -518,6 +567,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.eve_data.selected_project = project
         self.eve_data.get_project_assets(project)
         self.eve_data.get_project_sequences(project)
+
+        # Clear SHOTS in UI
+        self.listShots.setModel(Model([]))
 
         # Fill Project Properties widget
         project_root = build_project_root(project.name)
@@ -551,10 +603,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
     def init_asset(self):
         """
-        Show/hide SHOTS Properties area depending on user selection in shots list widget
-        Fill shots properties widgets
-
-        :return:
+        When ASSET selected in UI
         """
 
         # Show and set up PROPERTIES widget
@@ -584,6 +633,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.asset_properties_ui.asset_ui.txtDescription.setText(asset.description)
 
     def init_sequence(self):
+        """
+        When SEQUENCE selected in UI
+        """
 
         # Show and set up PROPERTIES widget
         self.project_properties_ui.hide()
@@ -608,6 +660,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.sequence_properties_ui.sequence_ui.txtDescription.setText(sequence.description)
 
     def init_shot(self):
+        """
+        When SHOT selected in UI
+        """
 
         # Show and set up PROPERTIES widget
         self.project_properties_ui.hide()
@@ -620,6 +675,11 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         shot_id = model_index.data(QtCore.Qt.UserRole + 1)
         shot = self.eve_data.get_shot(shot_id)
         self.eve_data.selected_shot = shot
+        self.eve_data.get_shot_assets(shot_id)
+
+        # FILL SHOT ASSETS WIDGET
+        self.model_shot_assets = Model(self.eve_data.shot_assets)
+        self.shot_properties_ui.shot_ui.listAssets.setModel(self.model_shot_assets)
 
         # Fill SHOT WIDGET
         self.shot_properties_ui.shot_ui.linProjectName.setText(self.eve_data.selected_project.name)
@@ -737,7 +797,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
     def del_shot(self):
 
-        model_index = self.listSequences.currentIndex()
+        model_index = self.listShots.currentIndex()
         shot_id = model_index.data(QtCore.Qt.UserRole + 1)
         shot_name = model_index.data(QtCore.Qt.UserRole + 2)
 
@@ -833,6 +893,26 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.eve_data.update_shot(shot)
 
         print '>> Shot "{}" updated!'.format(shot.name)
+
+    def link_assets(self, model_indexes, shot):
+
+        for model_index in model_indexes:
+            # Link asset
+            if self.eve_data.link_asset(model_index.data(QtCore.Qt.UserRole + 1), shot.id):
+                # Updated UI
+                self.model_shot_assets.layoutAboutToBeChanged.emit()
+                self.eve_data.get_shot_assets(shot.id)
+                self.model_shot_assets.layoutChanged.emit()
+
+                print '>> Asset {0} linked to shot {1}'.format(model_index.data(QtCore.Qt.UserRole + 2), shot.name)
+            else:
+                print '>> Asset {0} already linked to shot {1}'.format(model_index.data(QtCore.Qt.UserRole + 2), shot.name)
+
+    def unlink_assets(self, list_assets, shot):
+
+        for asset in list_assets:
+            self.eve_data.unlink_asset(asset.id, shot.id)
+            print '>> Asset {0} unlinked from shot {1}'.format(asset.name, shot.name)
 
     # MAIN FUNCTIONS
     def launch_houdini(self):
@@ -940,6 +1020,24 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             self.AS.project = self.eve_data.selected_project
             self.AS.sequence = self.eve_data.selected_sequence
             self.AS.exec_()
+
+    def run_link_assets(self):
+
+        self.LA.shot = self.eve_data.selected_shot
+        self.LA.project_assets = self.eve_data.project_assets
+        self.LA.show()
+
+    def run_unlink_assets(self):
+
+        # Get selected assets from UI
+        model_indexes = self.shot_properties_ui.shot_ui.listAssets.selectedIndexes()
+
+        list_assets = []
+        for model_index in model_indexes:
+            list_assets.append(self.eve_data.get_asset(model_index.data(QtCore.Qt.UserRole + 1)))
+
+        # Break links
+        self.unlink_assets(list_assets, self.eve_data.selected_shot)
 
 
 # Run Project Manager

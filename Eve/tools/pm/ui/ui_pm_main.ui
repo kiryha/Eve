@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>655</width>
-    <height>716</height>
+    <width>851</width>
+    <height>890</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="boxASS">
+     <widget class="QGroupBox" name="groupBox">
       <property name="maximumSize">
        <size>
         <width>150</width>
@@ -59,9 +59,9 @@
        </size>
       </property>
       <property name="title">
-       <string>ASS</string>
+       <string>Assets</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="QListView" name="listAssets"/>
        </item>
@@ -82,6 +82,21 @@
          </widget>
         </widget>
        </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="boxASS">
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Sequences | Shots</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QListView" name="listSequences"/>
        </item>
@@ -126,19 +141,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="boxLibrary">
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Library</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QGroupBox" name="boxProperties">
       <property name="title">
        <string>Properties</string>
@@ -157,7 +159,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>655</width>
+     <width>851</width>
      <height>21</height>
     </rect>
    </property>

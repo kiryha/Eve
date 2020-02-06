@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_shot.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_shot.ui' applies.
 #
-# Created: Wed Feb 05 14:22:52 2020
+# Created: Thu Feb 06 10:51:23 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Shot(object):
     def setupUi(self, Shot):
         Shot.setObjectName("Shot")
-        Shot.resize(369, 425)
+        Shot.resize(369, 460)
         self.verticalLayout = QtWidgets.QVBoxLayout(Shot)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter_3 = QtWidgets.QSplitter(Shot)
@@ -40,17 +40,17 @@ class Ui_Shot(object):
         self.linSequenceName.setAlignment(QtCore.Qt.AlignCenter)
         self.linSequenceName.setObjectName("linSequenceName")
         self.verticalLayout.addWidget(self.splitter_4)
-        self.splitter = QtWidgets.QSplitter(Shot)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName("splitter")
-        self.label = QtWidgets.QLabel(self.splitter)
+        self.splitter_8 = QtWidgets.QSplitter(Shot)
+        self.splitter_8.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_8.setObjectName("splitter_8")
+        self.label = QtWidgets.QLabel(self.splitter_8)
         self.label.setMinimumSize(QtCore.QSize(120, 0))
         self.label.setMaximumSize(QtCore.QSize(85, 16777215))
         self.label.setObjectName("label")
-        self.linShotName = QtWidgets.QLineEdit(self.splitter)
+        self.linShotName = QtWidgets.QLineEdit(self.splitter_8)
         self.linShotName.setAlignment(QtCore.Qt.AlignCenter)
         self.linShotName.setObjectName("linShotName")
-        self.verticalLayout.addWidget(self.splitter)
+        self.verticalLayout.addWidget(self.splitter_8)
         self.splitter_5 = QtWidgets.QSplitter(Shot)
         self.splitter_5.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_5.setObjectName("splitter_5")
@@ -77,13 +77,20 @@ class Ui_Shot(object):
         self.linHeight.setAlignment(QtCore.Qt.AlignCenter)
         self.linHeight.setObjectName("linHeight")
         self.verticalLayout.addWidget(self.splitter_6)
-        self.label_2 = QtWidgets.QLabel(Shot)
+        self.splitter_7 = QtWidgets.QSplitter(Shot)
+        self.splitter_7.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_7.setObjectName("splitter_7")
+        self.label_2 = QtWidgets.QLabel(self.splitter_7)
+        self.label_2.setMinimumSize(QtCore.QSize(120, 0))
+        self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
-        self.listAssets = QtWidgets.QListView(Shot)
+        self.splitter = QtWidgets.QSplitter(self.splitter_7)
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setObjectName("splitter")
+        self.listAssets = QtWidgets.QListView(self.splitter)
+        self.listAssets.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.listAssets.setObjectName("listAssets")
-        self.verticalLayout.addWidget(self.listAssets)
-        self.splitter_2 = QtWidgets.QSplitter(Shot)
+        self.splitter_2 = QtWidgets.QSplitter(self.splitter)
         self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_2.setObjectName("splitter_2")
         self.btnLinkAsset = QtWidgets.QPushButton(self.splitter_2)
@@ -92,7 +99,7 @@ class Ui_Shot(object):
         self.btnUnlinkAsset = QtWidgets.QPushButton(self.splitter_2)
         self.btnUnlinkAsset.setMaximumSize(QtCore.QSize(16777215, 30))
         self.btnUnlinkAsset.setObjectName("btnUnlinkAsset")
-        self.verticalLayout.addWidget(self.splitter_2)
+        self.verticalLayout.addWidget(self.splitter_7)
         self.label_4 = QtWidgets.QLabel(Shot)
         self.label_4.setObjectName("label_4")
         self.verticalLayout.addWidget(self.label_4)

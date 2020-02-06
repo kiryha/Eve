@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>369</width>
-    <height>425</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,7 +79,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QSplitter" name="splitter">
+    <widget class="QSplitter" name="splitter_8">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -164,41 +164,60 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Linked Assets</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QListView" name="listAssets"/>
-   </item>
-   <item>
-    <widget class="QSplitter" name="splitter_2">
+    <widget class="QSplitter" name="splitter_7">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QPushButton" name="btnLinkAsset">
-      <property name="maximumSize">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
        <size>
-        <width>16777215</width>
-        <height>30</height>
+        <width>120</width>
+        <height>0</height>
        </size>
       </property>
       <property name="text">
-       <string>Link Asset</string>
+       <string>Linked Assets</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
       </property>
      </widget>
-     <widget class="QPushButton" name="btnUnlinkAsset">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <property name="text">
-       <string>Break Link</string>
-      </property>
+      <widget class="QListView" name="listAssets">
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+      </widget>
+      <widget class="QSplitter" name="splitter_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QPushButton" name="btnLinkAsset">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Link Asset</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnUnlinkAsset">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Break Link</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </widget>
    </item>
