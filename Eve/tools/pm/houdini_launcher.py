@@ -46,7 +46,7 @@ def get_hda_path(root_3d):
 
     return pathHDA
 
-def run(eve_root, projects_root, HOUDINI, project_name):
+def run_houdini(eve_root, projects_root, HOUDINI, project_name, script=None, id=None):
 
 
     print eve_root, projects_root, HOUDINI, project_name
@@ -60,9 +60,9 @@ def run(eve_root, projects_root, HOUDINI, project_name):
     # Eve location ('E:/Eve')
     os.environ['EVE_ROOT'] = '{0}'.format(eve_root)
     # Project Root folder ('E:/projects/<project_name>')
-    os.environ['AT_PROJECT'] = project_root
+    os.environ['EVE_PROJECT'] = project_root
     # Project Name
-    os.environ['AT_PROJECT_NAME'] = '{0}'.format(project_name)
+    os.environ['EVE_PROJECT_NAME'] = '{0}'.format(project_name)
     # Root of houdini project
     os.environ['JOB'] = root_3d
 
@@ -71,7 +71,8 @@ def run(eve_root, projects_root, HOUDINI, project_name):
     # Houdini path
     os.environ['HOUDINI_PATH'] = '{0}/tools/houdini/settings;&'.format(eve_root)
     # Path to custom python tools
-    os.environ['PYTHONPATH'] = '{0}/dna;{0}/tools;&'.format(eve_root)  ### !!!!!!!!!!!!!!!!!!!!!!!!!!! WIP
+    # os.environ['PYTHONPATH'] = '{0}/tools/core;{0}/tools/houdini;&'.format(eve_root)  ### !!!!!!!!!!!!!!!!!!!!!!! WIP
+    os.environ['PYTHONPATH'] = '{0}/tools'.format(eve_root)  # from houdini import create_asset
 
     # Icons
     # os.environ['HOUDINI_UI_ICON_PATH'] = '{}/EVE/icons'.format(rootPipeline)
@@ -83,7 +84,12 @@ def run(eve_root, projects_root, HOUDINI, project_name):
     # os.environ['PATH'] += ';' + 'C:/ProgramData/Redshift/bin;$PATH'
     # os.environ['HOUDINI_PATH'] = 'C:/ProgramData/Redshift/Plugins/Houdini/{0};{1}'.format(build, os.environ['HOUDINI_PATH'])
 
-    subprocess.Popen(HOUDINI)
+    if script:
+        # command = ['C:/temp/asset.hipnc'], ['C:/temp/script.py'], 'AAA', 'BBB'
+        # command = ['C:/temp/script.py'], 'AAA', 'BBB'
+        subprocess.Popen([HOUDINI, [script], str(id)])
+    else:
+        subprocess.Popen(HOUDINI)
 
     # Prevent closing CMD window
     # raw_input()

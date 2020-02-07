@@ -23,9 +23,9 @@ importANM.run()
   </tool>
 
   <tool name="snv" label="SNV" icon="PLASMA_App">
-    <script scriptType="python"><![CDATA[import saveNextVersion
-reload(saveNextVersion)
-saveNextVersion.run()]]></script>
+    <script scriptType="python"><![CDATA[import save_next_version
+reload(save_next_version)
+save_next_version.save_next_version()]]></script>
   </tool>
 
   <tool name="create Flipbook" label="FlipB" icon="PLASMA_App">

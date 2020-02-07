@@ -23,8 +23,10 @@ from ui import ui_pm_add_shot
 
 from core import database
 from core import settings
+from core import file_path
 from core.common import Model
 
+import houdini_launcher
 
 def build_project_root(project_name):
     """Build project root folder string"""
@@ -450,7 +452,8 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # SETUP ENVIRONMENT
         os.environ['EVE_ROOT'] = os.environ['EVE_ROOT'].replace('\\', '/')
-        self.eve_root = os.environ['EVE_ROOT']
+        self.eve_root = os.environ['EVE_ROOT']  # E:/Eve/Eve
+
 
         # Load Eve DB
         # Create database file if not exists (first time Project Manager launch)
@@ -502,6 +505,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # Asset properties
         self.asset_properties_ui.btnUpdateAsset.clicked.connect(self.update_asset)
+        self.asset_properties_ui.btnCreateHoudiniFile.clicked.connect(self.create_asset_file)
 
         # Sequence properties
         self.sequence_properties_ui.btnUpdateSequence.clicked.connect(self.update_sequence)
@@ -903,16 +907,17 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             print '>> Asset {0} unlinked from shot {1}'.format(asset.name, shot.name)
 
     # MAIN FUNCTIONS
-    def launch_houdini(self):
-        import launch_houdini
+    def launch_houdini(self, script=None, id=None):
 
         HOUDINI = settings.HOUDINI.format(self.project_properties_ui.project_ui.linHoudini.text())
 
         # Run Maya
-        launch_houdini.run(self.eve_root,
-                           settings.PROJECTS,
-                           HOUDINI,
-                           self.eve_data.selected_project.name)
+        houdini_launcher.run_houdini(self.eve_root,
+                                     settings.PROJECTS,
+                                     HOUDINI,
+                                     self.eve_data.selected_project.name,
+                                     script=script,
+                                     id=id)
 
     def create_folder(self, path):
         """
@@ -1027,6 +1032,10 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         # Break links
         self.unlink_assets(list_assets, self.eve_data.selected_shot)
 
+    def create_asset_file(self):
+
+        script = '{0}/tools/houdini/create_asset.py'.format(self.eve_root)
+        self.launch_houdini(script, self.eve_data.selected_asset.id)
 
 # Run Project Manager
 if __name__ == "__main__":

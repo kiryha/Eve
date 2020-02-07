@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_asset_properties.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_asset_properties.ui' applies.
 #
-# Created: Tue Dec 24 13:54:52 2019
+# Created: Thu Feb 06 13:35:38 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_AssetProperties(object):
     def setupUi(self, AssetProperties):
         AssetProperties.setObjectName("AssetProperties")
-        AssetProperties.resize(369, 153)
+        AssetProperties.resize(369, 101)
         self.verticalLayout = QtWidgets.QVBoxLayout(AssetProperties)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -29,10 +29,10 @@ class Ui_AssetProperties(object):
         self.splitter_5 = QtWidgets.QSplitter(AssetProperties)
         self.splitter_5.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_5.setObjectName("splitter_5")
-        self.btnCreateMayaFile = QtWidgets.QPushButton(self.splitter_5)
-        self.btnCreateMayaFile.setObjectName("btnCreateMayaFile")
-        self.btnOpenMayaFile = QtWidgets.QPushButton(self.splitter_5)
-        self.btnOpenMayaFile.setObjectName("btnOpenMayaFile")
+        self.btnCreateHoudiniFile = QtWidgets.QPushButton(self.splitter_5)
+        self.btnCreateHoudiniFile.setObjectName("btnCreateHoudiniFile")
+        self.btnOpenHoudiniFile = QtWidgets.QPushButton(self.splitter_5)
+        self.btnOpenHoudiniFile.setObjectName("btnOpenHoudiniFile")
         self.verticalLayout.addWidget(self.splitter_5)
 
         self.retranslateUi(AssetProperties)
@@ -41,6 +41,6 @@ class Ui_AssetProperties(object):
     def retranslateUi(self, AssetProperties):
         AssetProperties.setWindowTitle(QtWidgets.QApplication.translate("AssetProperties", "Form", None, -1))
         self.btnUpdateAsset.setText(QtWidgets.QApplication.translate("AssetProperties", "Update Asset Data", None, -1))
-        self.btnCreateMayaFile.setText(QtWidgets.QApplication.translate("AssetProperties", "Create Houdini Scene", None, -1))
-        self.btnOpenMayaFile.setText(QtWidgets.QApplication.translate("AssetProperties", "Open Houdini Scene", None, -1))
+        self.btnCreateHoudiniFile.setText(QtWidgets.QApplication.translate("AssetProperties", "Create Houdini Scene", None, -1))
+        self.btnOpenHoudiniFile.setText(QtWidgets.QApplication.translate("AssetProperties", "Open Houdini Scene", None, -1))
 

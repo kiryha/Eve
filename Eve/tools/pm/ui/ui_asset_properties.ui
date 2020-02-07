@@ -51,12 +51,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QPushButton" name="btnCreateMayaFile">
+     <widget class="QPushButton" name="btnCreateHoudiniFile">
       <property name="text">
        <string>Create Houdini Scene</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btnOpenMayaFile">
+     <widget class="QPushButton" name="btnOpenHoudiniFile">
       <property name="text">
        <string>Open Houdini Scene</string>
       </property>

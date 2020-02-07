@@ -337,7 +337,7 @@ class EveFile:
         'asset_hip':
             {'id': 1,
              'name': 'asset_hip',
-             'prefix': '',
+             'prefix': 'ast',
              'description': 'Houdini working scene for assets'},
 
         'asset_hda':
@@ -935,4 +935,3 @@ class EveData:
         for asset in self.shot_assets:
             if asset.id == asset_id:
                 self.shot_assets.remove(asset)
-
