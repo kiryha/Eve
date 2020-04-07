@@ -1,8 +1,8 @@
-from PySide2 import QtCore
+from PySide2 import QtCore, QtGui
 
 
 # PySide Eve Data Model
-class Model(QtCore.QAbstractListModel):
+class ListModel(QtCore.QAbstractListModel):
     def __init__(self, data, parent=None):
         QtCore.QAbstractListModel.__init__(self, parent)
         self._data = data
@@ -27,6 +27,8 @@ class Model(QtCore.QAbstractListModel):
         row_index = index.row()
         data = self._data[row_index]
 
+        # if role == QtCore.Qt.ForegroundRole:  # Make font red
+        #     return QtGui.QBrush(QtCore.Qt.red)
         if role == QtCore.Qt.DisplayRole:  # Display name in UI
             return data.name
         if role == QtCore.Qt.UserRole + 1:  # Return ID

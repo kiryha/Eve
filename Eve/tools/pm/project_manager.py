@@ -24,7 +24,7 @@ from ui import ui_pm_add_shot
 from core import database
 from core import settings
 from core import file_path
-from core.common import Model
+from core.models import ListModel
 
 import houdini_launcher
 
@@ -157,7 +157,7 @@ class LinkAssets(QtWidgets.QDialog, ui_link_assets.Ui_LinkAssets):
         # self.asset_ui.txtDescription.clear()
         #
         # Add assets to ui
-        self.model_assets = Model(self.project_assets)
+        self.model_assets = ListModel(self.project_assets)
         self.listAssets.setModel(self.model_assets)
 
     def link_asset(self):
@@ -311,7 +311,7 @@ class AddAsset(QtWidgets.QDialog, ui_pm_add_asset.Ui_AddAsset):
         self.asset_ui.txtDescription.clear()
 
         # Add asset types to ui
-        self.model_asset_types = Model(self.asset_types)
+        self.model_asset_types = ListModel(self.asset_types)
         self.asset_ui.comAssetType.setModel(self.model_asset_types)
 
     def add_asset(self):
@@ -449,11 +449,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.btn_project_create = 'Create Project'
         self.btn_project_update = 'Update Project'
 
-
         # SETUP ENVIRONMENT
         os.environ['EVE_ROOT'] = os.environ['EVE_ROOT'].replace('\\', '/')
         self.eve_root = os.environ['EVE_ROOT']  # E:/Eve/Eve
-
 
         # Load Eve DB
         # Create database file if not exists (first time Project Manager launch)
@@ -463,7 +461,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
                 os.makedirs(os.path.dirname(self.SQL_FILE_PATH))
             self.create_database()
         self.eve_data = database.EveData(self.SQL_FILE_PATH)
-        self.model_projects = Model(self.eve_data.projects)
+        self.model_projects = ListModel(self.eve_data.projects)
         self.model_assets = None
         self.model_sequences = None
         self.model_shots = None
@@ -587,10 +585,10 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.project_properties_ui.project_ui.txtDescription.setText(project.description)
 
         # FILL ASSET and SEQUENCE WIDGETS
-        self.model_assets = Model(self.eve_data.project_assets)
+        self.model_assets = ListModel(self.eve_data.project_assets)
         self.listAssets.setModel(self.model_assets)
 
-        self.model_sequences = Model(self.eve_data.project_sequences)
+        self.model_sequences = ListModel(self.eve_data.project_sequences)
         self.listSequences.setModel(self.model_sequences)
 
         # Enable/disable UI buttons depending on project existence
@@ -627,10 +625,10 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.asset_properties_ui.asset_ui.linProjectName.setText(self.eve_data.selected_project.name)
         self.asset_properties_ui.asset_ui.linAssetName.setText(asset.name)
 
-        model_asset_types = Model(self.eve_data.asset_types)
+        model_asset_types = ListModel(self.eve_data.asset_types)
         self.asset_properties_ui.asset_ui.comAssetType.setModel(model_asset_types)
         # Find AssetType string by database index
-        # !!! Probably wrong implementation of model data! and can be done via Model() !!!!!
+        # !!! Probably wrong implementation of model data! and can be done via ListModel() !!!!!
         self.eve_data.get_asset_type_string(asset.type)
         self.asset_properties_ui.asset_ui.comAssetType.setCurrentText(self.eve_data.asset_type_string)
         self.asset_properties_ui.asset_ui.txtDescription.setText(asset.description)
@@ -653,7 +651,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.eve_data.selected_sequence = sequence
         # and shot
         self.eve_data.get_sequence_shots(sequence.id)
-        self.model_shots = Model(self.eve_data.sequence_shots)
+        self.model_shots = ListModel(self.eve_data.sequence_shots)
         self.listShots.setModel(self.model_shots)
 
         # Fill SEQUENCE WIDGET
@@ -681,7 +679,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # FILL SHOT ASSETS WIDGET
         self.eve_data.get_shot_assets(shot_id)
-        self.model_shot_assets = Model(self.eve_data.shot_assets)
+        self.model_shot_assets = ListModel(self.eve_data.shot_assets)
         self.shot_properties_ui.shot_ui.listAssets.setModel(self.model_shot_assets)
 
         # Fill SHOT WIDGET
@@ -821,6 +819,8 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         # Update folder structure on HDD
         # FOLDERS = build_folder_structure()
         # self.create_folders(build_project_root(project_name), FOLDERS)
+
+        print '>> Project {0} updated!'.format(project.name)
 
     def update_asset(self):
         """
