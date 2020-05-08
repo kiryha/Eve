@@ -571,7 +571,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.eve_data.get_project_sequences(project)
 
         # Clear SHOTS in UI
-        self.listShots.setModel(Model([]))
+        self.listShots.setModel(ListModel([]))
 
         # Fill Project Properties widget
         project_root = build_project_root(project.name)
