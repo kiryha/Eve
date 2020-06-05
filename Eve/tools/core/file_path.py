@@ -2,6 +2,8 @@
 Create file path strings for any file in Eve
 Asset path example: 'Z:/projects/Avatar/3D/scenes/ASSETS/NYC/AST_NYC_001.hip'
 
+
+
 File Naming convention for filePath:
 <file_path> = <file_location>/<file_name>
 <file_name> = <file_code>_<file_version>.<file_extension>
@@ -14,6 +16,9 @@ Versions (for current file path string):
     - LATEST: last + 1
 
 """
+
+# TODO: Handle sequences paths <file_name> = <file_code>_<file_version>.<frame_number>.<file_extension>
+# TODO: Handle location paths <file_name> = <file_location>
 
 import os
 import glob

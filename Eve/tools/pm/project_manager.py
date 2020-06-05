@@ -28,6 +28,9 @@ from core.models import ListModel
 
 import houdini_launcher
 
+
+# TODO: Change project folder structure: scenes: assets (chars, env, props, fx) shots (anim, render, lay, lookdev) !!!
+
 def build_project_root(project_name):
     """Build project root folder string"""
 
@@ -59,7 +62,8 @@ def build_folder_structure():
     ASSETS = [
         ['CHARACTERS', []],
         ['ENVIRONMENTS', []],
-        ['PROPS', []]
+        ['PROPS', []],
+        ['FX', []]
     ]
     # Types structure
     TYPES = [
@@ -93,7 +97,9 @@ def build_folder_structure():
             ['3D', [
                 ['lib', [
                     ['ANIMATION', []],
-                    ['MATERIALS', ASSETS]  # Or TYPES ?
+                    ['MATERIALS', [
+                        ['MANTRA', []]
+                    ]]
                 ]],
                 ['fx', TYPES],
                 ['caches', TYPES],
@@ -104,11 +110,12 @@ def build_folder_structure():
                 ['render', SHOTS],
                 ['scenes', [
                     ['ASSETS', ASSETS],
-                    ['ANIMATION', SHOTS],
-                    ['FX', TYPES],
-                    ['LAYOUT', SHOTS],
                     ['LOOKDEV', TYPES],
-                    ['RENDER', SHOTS]
+                    ['SHOTS', [
+                        ['ANIMATION', SHOTS],
+                        ['LAYOUT', SHOTS],
+                        ['RENDER', SHOTS]
+                    ]]
                 ]],
                 ['textures', TYPES],
             ]],
