@@ -21,7 +21,8 @@ from ui import ui_shot
 from ui import ui_shot_properties
 from ui import ui_pm_add_shot
 
-from core import database
+from core.database import entities
+from core.database import eve_data
 from core import settings
 from core import file_path
 from core.models import ListModel
@@ -467,7 +468,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             if not os.path.exists(os.path.dirname(self.SQL_FILE_PATH)):
                 os.makedirs(os.path.dirname(self.SQL_FILE_PATH))
             self.create_database()
-        self.eve_data = database.EveData(self.SQL_FILE_PATH)
+        self.eve_data = eve_data.EveData(self.SQL_FILE_PATH)
         self.model_projects = ListModel(self.eve_data.projects)
         self.model_assets = None
         self.model_sequences = None
@@ -528,6 +529,161 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         # Root folder for the report files
         webbrowser.open(settings.DOCS)
 
+    def init_database(self, connection, cursor):
+        """
+        Create database tables
+        :return:
+        """
+
+        # TYPES
+        cursor.execute('''CREATE TABLE asset_types (
+                        id integer primary key autoincrement,
+                        name text,
+                        description text
+                        )''')
+
+        cursor.execute('''CREATE TABLE file_types (
+                        id integer primary key autoincrement,
+                        name text,
+                        description text
+                        )''')
+
+        # MAIN ITEMS
+        cursor.execute('''CREATE TABLE projects (
+                        id integer primary key autoincrement,
+                        name text,
+                        houdini_build text,
+                        width integer,
+                        height integer,
+                        description text
+                        )''')
+
+        cursor.execute('''CREATE TABLE assets (
+                        id integer primary key autoincrement,
+                        name text,
+                        project integer,
+                        type integer,
+                        description text,
+                        FOREIGN KEY(project) REFERENCES projects(id)
+                        FOREIGN KEY(type) REFERENCES asset_types(id)
+                        )''')
+
+        cursor.execute('''CREATE TABLE sequences (
+                        id integer primary key autoincrement,
+                        name text,
+                        project integer,
+                        description text,
+                        FOREIGN KEY(project) REFERENCES projects(id)
+                        )''')
+
+        cursor.execute('''CREATE TABLE shots (
+                        id integer primary key autoincrement,
+                        name text,
+                        sequence integer,
+                        start_frame integer,
+                        end_frame integer,
+                        width integer, 
+                        height integer,
+                        description text,
+                        FOREIGN KEY(sequence) REFERENCES sequences(id)
+                        )''')
+
+        # FILES
+        cursor.execute('''CREATE TABLE asset_files (
+                        id integer primary key autoincrement,
+                        type integer,
+                        asset integer,
+                        snapshot integer,
+                        description text,
+                        FOREIGN KEY(type) REFERENCES file_types(id)
+                        FOREIGN KEY(asset) REFERENCES assets(id)
+                        FOREIGN KEY(snapshot) REFERENCES asset_snapshots(id)
+                        )''')
+
+        cursor.execute('''CREATE TABLE shot_files (
+                        id integer primary key autoincrement,
+                        type integer,
+                        shot integer,
+                        snapshot integer,
+                        description text,
+                        FOREIGN KEY(type) REFERENCES file_types(id)
+                        FOREIGN KEY(shot) REFERENCES shots(id)
+                        FOREIGN KEY(snapshot) REFERENCES shot_snapshots(id)
+                        )''')
+
+        # LINKS
+        # Link assets to the shots
+        cursor.execute('''CREATE TABLE shot_assets (
+                        id integer primary key autoincrement,
+                        shot_id integer,
+                        asset_id integer,
+                        FOREIGN KEY(shot_id) REFERENCES shots(id)
+                        FOREIGN KEY(asset_id) REFERENCES assets(id)
+                        )''')
+
+        # SNAPSHOTS
+        cursor.execute('''CREATE TABLE asset_snapshot (
+                        id integer primary key autoincrement,
+                        asset_name text,
+                        asset_id text,
+                        asset_version text,
+                        description text
+                        )''')
+
+        connection.commit()
+
+    def init_asset_types(self, connection, cursor):
+        """
+        Fill asset types table in the DB (character, environment, prop, FX)
+
+        :param connection:
+        :param cursor:
+        :return:
+        """
+
+        for name, data in entities.Asset.asset_types.iteritems():
+            cursor.execute("INSERT INTO asset_types VALUES ("
+                           ":id,"
+                           ":name,"
+                           ":description)",
+
+                           {'id': data['id'],
+                            'name': name,
+                            'description': data['description']})
+
+        connection.commit()
+
+    def init_file_types(self, connection, cursor):
+        """
+        Fill file types table in the DB.
+
+        Any file used in Eve should has a particular type. Here is the full list of all possible types in Eve.
+
+        asset_hip:
+            Working scene for Assets. Here we store all source data to build an asset. Results are exported as caches,
+            and caches used in asset_hda files.
+
+        asset_hda:
+            Houdini Digital Asset for ASSETS. Used to load assets of any type (char, env, props, fx) into shots.
+            Contain cached data with interface. Source of cached data is stored in asset_hip
+
+        :param connection:
+        :param cursor:
+        :return:
+        """
+
+        for name, data in entities.EveFile.file_types.iteritems():
+            cursor.execute("INSERT INTO file_types VALUES ("
+                           ":id,"
+                           ":name,"
+                           ":description)",
+
+                           {'id': data['id'],
+                            'name': name,
+                            'description': data['description']})
+
+        connection.commit()
+
     def create_database(self):
         """
         Create database file with necessary tables
@@ -537,9 +693,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
 
-        database.init_database(connection, cursor)
-        database.init_asset_types(connection, cursor)
-        database.init_file_types(connection, cursor)
+        self.init_database(connection, cursor)
+        self.init_asset_types(connection, cursor)
+        self.init_file_types(connection, cursor)
 
         connection.close()
 
@@ -706,7 +862,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         """
 
         # Create project object
-        project = database.Project(project_name)
+        project = entities.Project(project_name)
         project.houdini_build = houdini_build
         project.width = project_width
         project.height = project_height
@@ -723,7 +879,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         """
 
         # Create asset and set asset properties
-        asset = database.Asset(asset_name, project.id)
+        asset = entities.Asset(asset_name, project.id)
         asset.type = asset_type_id
         asset.description = asset_description
 
@@ -735,7 +891,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
     def add_sequence(self, project, sequence_name, sequence_description):
 
         # Create sequence and set sequence properties
-        sequence = database.Sequence(sequence_name, project.id)
+        sequence = entities.Sequence(sequence_name, project.id)
         sequence.description = sequence_description
 
         # Add asset to DB and update UI
@@ -746,7 +902,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
     def add_shot(self, sequence, shot_name, shot_start_frame, shot_end_frame, shot_width, shot_height, shot_description):
 
         # Create shot and set shot properties
-        shot = database.Shot(shot_name, sequence.id)
+        shot = entities.Shot(shot_name, sequence.id)
         shot.start_frame = shot_start_frame
         shot.end_frame = shot_end_frame
         shot.width = shot_width
