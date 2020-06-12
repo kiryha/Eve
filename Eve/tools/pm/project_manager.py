@@ -22,7 +22,7 @@ from ui import ui_shot_properties
 from ui import ui_pm_add_shot
 
 from core.database import entities
-from core.database import eve_data
+from core.database import eve
 from core import settings
 from core import file_path
 from core.models import ListModel
@@ -468,12 +468,19 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             if not os.path.exists(os.path.dirname(self.SQL_FILE_PATH)):
                 os.makedirs(os.path.dirname(self.SQL_FILE_PATH))
             self.create_database()
-        self.eve_data = eve_data.EveData(self.SQL_FILE_PATH)
+        self.eve_data = eve.EveData(self.SQL_FILE_PATH)
         self.model_projects = ListModel(self.eve_data.projects)
         self.model_assets = None
         self.model_sequences = None
         self.model_shots = None
         self.model_shot_assets = None
+
+        # Eve data
+        self.selected_project = None
+        self.selected_asset = None
+        self.selected_sequence = None
+        self.selected_shot = None
+        self.asset_type_string = None
 
         # Load ADD ENTITY classes
         self.AP = AddProject(self)
@@ -729,7 +736,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         model_index = self.listProjects.currentIndex()  # .selectedIndexes()[0]
         project_id = model_index.data(QtCore.Qt.UserRole + 1)
         project = self.eve_data.get_project(project_id)
-        self.eve_data.selected_project = project
+        self.selected_project = project
         self.eve_data.get_project_assets(project)
         self.eve_data.get_project_sequences(project)
 
@@ -781,11 +788,11 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         model_index = self.listAssets.currentIndex()
         asset_id = model_index.data(QtCore.Qt.UserRole + 1)
         asset = self.eve_data.get_asset(asset_id)
-        self.eve_data.selected_asset = asset
+        self.selected_asset = asset
 
         # Fill ASSET WIDGET
         self.asset_properties_ui.asset_ui.linAssetName.setEnabled(False)
-        self.asset_properties_ui.asset_ui.linProjectName.setText(self.eve_data.selected_project.name)
+        self.asset_properties_ui.asset_ui.linProjectName.setText(self.selected_project.name)
         self.asset_properties_ui.asset_ui.linAssetName.setText(asset.name)
 
         model_asset_types = ListModel(self.eve_data.asset_types)
@@ -793,7 +800,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         # Find AssetType string by database index
         # !!! Probably wrong implementation of model data! and can be done via ListModel() !!!!!
         self.eve_data.get_asset_type_string(asset.type)
-        self.asset_properties_ui.asset_ui.comAssetType.setCurrentText(self.eve_data.asset_type_string)
+        self.asset_properties_ui.asset_ui.comAssetType.setCurrentText(self.asset_type_string)
         self.asset_properties_ui.asset_ui.txtDescription.setText(asset.description)
 
     def init_sequence(self):
@@ -811,7 +818,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         model_index = self.listSequences.currentIndex()
         sequence_id = model_index.data(QtCore.Qt.UserRole + 1)
         sequence = self.eve_data.get_sequence(sequence_id)
-        self.eve_data.selected_sequence = sequence
+        self.selected_sequence = sequence
         # and shot
         self.eve_data.get_sequence_shots(sequence.id)
         self.model_shots = ListModel(self.eve_data.sequence_shots)
@@ -819,7 +826,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # Fill SEQUENCE WIDGET
         self.sequence_properties_ui.sequence_ui.linSequenceName.setEnabled(False)
-        self.sequence_properties_ui.sequence_ui.linProjectName.setText(self.eve_data.selected_project.name)
+        self.sequence_properties_ui.sequence_ui.linProjectName.setText(self.selected_project.name)
         self.sequence_properties_ui.sequence_ui.linSequenceName.setText(sequence.name)
         self.sequence_properties_ui.sequence_ui.txtDescription.setText(sequence.description)
 
@@ -838,7 +845,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         model_index = self.listShots.currentIndex()
         shot_id = model_index.data(QtCore.Qt.UserRole + 1)
         shot = self.eve_data.get_shot(shot_id)
-        self.eve_data.selected_shot = shot
+        self.selected_shot = shot
 
         # FILL SHOT ASSETS WIDGET
         self.eve_data.get_shot_assets(shot_id)
@@ -847,9 +854,9 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # Fill SHOT WIDGET
         self.shot_properties_ui.shot_ui.linShotName.setEnabled(False)
-        self.shot_properties_ui.shot_ui.linProjectName.setText(self.eve_data.selected_project.name)
-        self.shot_properties_ui.shot_ui.linSequenceName.setText(self.eve_data.selected_sequence.name)
-        self.shot_properties_ui.shot_ui.linShotName.setText(self.eve_data.selected_shot.name)
+        self.shot_properties_ui.shot_ui.linProjectName.setText(self.selected_project.name)
+        self.shot_properties_ui.shot_ui.linSequenceName.setText(self.selected_sequence.name)
+        self.shot_properties_ui.shot_ui.linShotName.setText(self.selected_shot.name)
         self.shot_properties_ui.shot_ui.linStartFrame.setText(str(shot.start_frame))
         self.shot_properties_ui.shot_ui.linEndFrame.setText(str(shot.end_frame))
         self.shot_properties_ui.shot_ui.linWidth.setText(str(shot.width))
@@ -937,28 +944,28 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         """
 
         # Notify user about delete
-        warning = Warnings(self.eve_data.selected_asset.name)
+        warning = Warnings(self.selected_asset.name)
         if warning.exec_():
             self.model_assets.layoutAboutToBeChanged.emit()
-            self.eve_data.del_asset(self.eve_data.selected_asset.id)
+            self.eve_data.del_asset(self.selected_asset.id)
             self.model_assets.layoutChanged.emit()
 
     def del_sequence(self):
 
         # Notify user about delete
-        warning = Warnings(self.eve_data.selected_sequence.name)
+        warning = Warnings(self.selected_sequence.name)
         if warning.exec_():
             self.model_sequences.layoutAboutToBeChanged.emit()
-            self.eve_data.del_sequence(self.eve_data.selected_sequence.id)
+            self.eve_data.del_sequence(self.selected_sequence.id)
             self.model_sequences.layoutChanged.emit()
 
     def del_shot(self):
 
         # Notify user about delete
-        warning = Warnings(self.eve_data.selected_shot.name)
+        warning = Warnings(self.selected_shot.name)
         if warning.exec_():
             self.model_shots.layoutAboutToBeChanged.emit()
-            self.eve_data.del_shot(self.eve_data.selected_shot.id)
+            self.eve_data.del_shot(self.selected_shot.id)
             self.model_shots.layoutChanged.emit()
 
     def update_project(self):
@@ -969,7 +976,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         print '>> Updating project...'
 
         # Load athena data
-        project = self.eve_data.selected_project
+        project = self.selected_project
 
         # Update project data
         project.maya = self.project_properties_ui.project_ui.linHoudini.text()
@@ -993,7 +1000,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         print '>> Updating asset...'
 
         # Get asset
-        asset = self.eve_data.selected_asset
+        asset = self.selected_asset
 
         # Modify asset data
         asset_type_index = self.asset_properties_ui.asset_ui.comAssetType.model().index(
@@ -1017,7 +1024,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         print '>> Updating sequence...'
 
         # Get sequence
-        sequence = self.eve_data.selected_sequence
+        sequence = self.selected_sequence
 
         # Modify sequence data
         sequence.description = self.sequence_properties_ui.sequence_ui.txtDescription.toPlainText()
@@ -1035,7 +1042,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         print '>> Updating shot...'
 
         # Get shot
-        shot = self.eve_data.selected_shot
+        shot = self.selected_shot
 
         # Modify shot data
         shot.start_frame = self.shot_properties_ui.shot_ui.linStartFrame.text()
@@ -1078,7 +1085,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         houdini_launcher.run_houdini(self.eve_root,
                                      settings.PROJECTS,
                                      HOUDINI,
-                                     self.eve_data.selected_project.name,
+                                     self.selected_project.name,
                                      script=script,
                                      id=id)
 
@@ -1131,7 +1138,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         """
 
         # Read UI data
-        project_name = self.eve_data.selected_project.name
+        project_name = self.selected_project.name
 
         # Determine project action: create new or update existing
         if self.project_properties_ui.btnCreateProject.text() == self.btn_project_update:
@@ -1152,7 +1159,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             print 'Select Project to create assets!'
 
         else:
-            self.AA.project = self.eve_data.selected_project
+            self.AA.project = self.selected_project
             self.AA.asset_types = self.eve_data.asset_types
             self.AA.exec_()
 
@@ -1163,7 +1170,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             print 'Select Project to create sequence!'
 
         else:
-            self.AE.project = self.eve_data.selected_project
+            self.AE.project = self.selected_project
             self.AE.exec_()
 
     def run_add_shot(self):
@@ -1173,13 +1180,13 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             print 'Select Sequence to create shot!'
 
         else:
-            self.AS.project = self.eve_data.selected_project
-            self.AS.sequence = self.eve_data.selected_sequence
+            self.AS.project = self.selected_project
+            self.AS.sequence = self.selected_sequence
             self.AS.exec_()
 
     def run_link_assets(self):
 
-        self.LA.shot = self.eve_data.selected_shot
+        self.LA.shot = self.selected_shot
         self.LA.project_assets = self.eve_data.project_assets
         self.LA.show()
 
@@ -1193,12 +1200,12 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             list_assets.append(self.eve_data.get_asset(model_index.data(QtCore.Qt.UserRole + 1)))
 
         # Break links
-        self.unlink_assets(list_assets, self.eve_data.selected_shot)
+        self.unlink_assets(list_assets, self.selected_shot)
 
     def create_asset_file(self):
 
         script = '{0}/tools/houdini/create_asset.py'.format(self.eve_root)
-        self.launch_houdini(script, self.eve_data.selected_asset.id)
+        self.launch_houdini(script, self.selected_asset.id)
 
 # Run Project Manager
 if __name__ == "__main__":

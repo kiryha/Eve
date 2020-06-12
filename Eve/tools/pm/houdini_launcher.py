@@ -47,9 +47,19 @@ def get_hda_path(root_3d):
     return pathHDA
 
 def run_houdini(eve_root, projects_root, HOUDINI, project_name, script=None, id=None):
+    """
+    Launch Houdini within project environment
 
+    :param eve_root: {E:/Eve/Eve}
+    :param projects_root: (E:/256/PROJECTS)
+    :param HOUDINI: (C:/Program Files/Side Effects Software/Houdini 18.0.460/bin/houdinifx.exe)
+    :param project_name: (Inception)
+    :param script:
+    :param id:
+    :return:
+    """
 
-    print eve_root, projects_root, HOUDINI, project_name
+    # print eve_root, projects_root, HOUDINI, project_name
 
     # SETUP PROJECT ENVIRONMENT
     # ACES (Download from imageworks github OpenColorIO-Confih repo)

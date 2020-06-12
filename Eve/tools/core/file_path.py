@@ -15,6 +15,14 @@ Versions (for current file path string):
     - LAST: maximum number of existing versions on HDD
     - LATEST: last + 1
 
+Eve can generate/analyze 3 types of path:
+    - FILE PATH:      S:/location/code_name_001.mb
+                      S:/location/001/code_name_001.mb
+
+    - FILE SEQUENCE:   S:/location/001/code_name_001.001.mb
+
+    - FILE LOCATION:  S:/location/001
+
 """
 
 # TODO: Handle sequences paths <file_name> = <file_code>_<file_version>.<frame_number>.<file_extension>
@@ -70,6 +78,7 @@ class EveFilePath:
         self.project_root = os.environ['EVE_PROJECT']  # Z:/projects/Avatar
         # DEFINE STRINGS
         self.file_name_template = '{0}_{1}_{2}.{3}'
+        self.file_name_sequence_template = '{0}_{1}_{2}.{3}.{4}'
         self.asset_root = '{0}/PROD/3D/scenes/ASSETS'.format(self.project_root)
         self.shot_root = '{0}/PROD/3D/scenes/SHOTS'.format(self.project_root)
         self.render_3d_root = '{0}/PROD/3D/images'.format(self.project_root)
@@ -77,6 +86,7 @@ class EveFilePath:
         self.comp_root = '{0}/PROD/2D/COMP'.format(self.project_root)
 
         # EVE FILE PATH OBJECT ATTRIBUTES
+        self.type = None  # String path type ('path', 'sequence' or 'location')
         self.path = None
         self.name = None
         self.location = None
@@ -227,6 +237,20 @@ class EveFilePath:
         asset_folder = '{0}S'.format(asset_type['name']).upper()
         file_name = self.file_name_template.format(file_prefix, asset_name, version, settings.HIP)
         file_path = '{0}/{1}/{2}/{3}'.format(self.asset_root, asset_folder, asset_name, file_name)
+        self.type = 'path'
+
+        print 'build_path_asset_hip [file_path] = ', file_path
+
+        self.set_path(file_path)
+
+    def build_path_shot_render(self, file_type, sequence_name, shot_name, version):
+
+        # E:/256/PROJECTS/VEX/PROD/3D/scenes/SHOTS/RENDER/homework/L02/homework_L02_001.hipnc
+
+        file_prefix = file_type['prefix']
+        file_name = self.file_name_template.format(file_prefix, shot_name, version, settings.HIP)
+        file_path = '{0}/RENDER/{1}/{2}/{3}'.format(self.shot_root, sequence_name, shot_name, file_name)
+        self.type = 'path'
 
         print 'build_path_asset_hip [file_path] = ', file_path
 

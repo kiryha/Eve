@@ -20,12 +20,6 @@ class EveData:
         self.project_sequences = []
         self.sequence_shots = []
         self.shot_assets = []
-        # EXTERNAL SET
-        self.selected_project = None
-        self.selected_asset = None
-        self.selected_sequences = None
-        self.selected_shot = None
-        self.asset_type_string = None
 
         # Initialize data
         self.init_data()
@@ -196,7 +190,7 @@ class EveData:
         connection.commit()
         connection.close()
 
-        self.selected_project = project
+        return project
 
     def del_project(self, project_id):
 
@@ -293,7 +287,7 @@ class EveData:
 
         for name, data in entities.Asset.asset_types.iteritems():
             if data['id'] == asset_type_id:
-                self.asset_type_string = name
+                return name
 
     def update_asset(self, asset):
 
@@ -315,7 +309,7 @@ class EveData:
         connection.commit()
         connection.close()
 
-        self.selected_asset = asset
+        return asset
 
     def del_asset(self, asset_id):
 
@@ -392,7 +386,7 @@ class EveData:
         connection.commit()
         connection.close()
 
-        self.selected_sequences = sequence
+        return sequence
 
     def del_sequence(self, sequence_id):
 
@@ -440,13 +434,13 @@ class EveData:
 
         self.sequence_shots.append(shot)
 
-    def get_shot(self, sequence_id):
+    def get_shot(self, shot_id):
 
         connection = sqlite3.connect(self.SQL_FILE_PATH)
         cursor = connection.cursor()
 
         cursor.execute("SELECT * FROM shots WHERE id=:id",
-                       {'id': sequence_id})
+                       {'id': shot_id})
 
         shot_tuple = cursor.fetchone()
 
@@ -501,7 +495,7 @@ class EveData:
         connection.commit()
         connection.close()
 
-        self.selected_shot = shot
+        return shot
 
     def del_shot(self, shot_id):
 

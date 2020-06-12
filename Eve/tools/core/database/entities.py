@@ -88,31 +88,31 @@ class EveFile:
         'asset_hda':
             {'id': 2,
              'name': 'asset_hda',
-             'prefix': '',
+             'prefix': 'hda',
              'description': 'Houdini digital asset for assets'},
 
         'asset_fx':
             {'id': 3,
              'name': 'asset_hip',
-             'prefix': '',
+             'prefix': 'fxa',
              'description': ''},
 
         'shot_animation':
             {'id': 4,
              'name': 'asset_hip',
-             'prefix': '',
+             'prefix': 'anm',
              'description': ''},
 
         'shot_render':
             {'id': 5,
              'name': 'asset_hip',
-             'prefix': '',
+             'prefix': 'rnd',
              'description': ''},
 
         'shot_fx':
             {'id': 6,
              'name': 'asset_hip',
-             'prefix': '',
+             'prefix': 'fxs',
              'description': 'Houdini working scene for assets.'}}
 
     def __init__(self, file_type_id, source_id):
