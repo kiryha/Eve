@@ -54,7 +54,6 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
 
         self.init_shots()
 
-
     def init_shots(self):
         """
         When sequence selected in Shot Manager Ui

@@ -4,7 +4,7 @@
 
 Restructured Eve pipeline for Houdini. 
 
-Features:
+### Features:
  - Project Manager tool (Shotgun for beggars)  
  Here you can create projects with assets and shots, launch Houdini in a project context.
  [![](https://live.staticflickr.com/65535/49999218432_8c757dd65c_o.png)](https://live.staticflickr.com/65535/49999218432_8c757dd65c_o.png)
@@ -17,7 +17,20 @@ Features:
 You need to have Python 2.7 with PySide2 in C:/Python27.  
 [Get Python with PySide2](https://drive.google.com/open?id=1jC4x2-Dcf5saixe9Z5aBu-kIMMaGEmtJ)
 
-Release structure for Eve:  
+### Learning database
+Attempt to make first steps with Houdini, Programming or Math? In addition to `Eve` specific materials, we have plenty of Houdini tutorials! 
+
+The best places to start with VEX and Python:
+- [VEX for artists](https://github.com/kiryha/Houdini/wiki/vex-for-artists)  
+- [Python for artists](https://github.com/kiryha/Houdini/wiki//python-for-artists)
+
+Don't miss [Programming basics](https://github.com/kiryha/Houdini/wiki//programming-basics) if you don't have programming experience!
+
+Applied Python in Houdini: [Python snippets](https://github.com/kiryha/Houdini/wiki/python-snippets)  
+Applied VEX: [VEX snippets](https://github.com/kiryha/Houdini/wiki//vex-snippets)   
+Small solutions as a HIP files: [HIP Examples](https://github.com/kiryha/Houdini/wiki//examples)
+
+### Release structure for Eve:  
   
  - Eve (root pipeline folder)  
     - project_manager.bat  

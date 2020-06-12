@@ -24,13 +24,10 @@ from ui import ui_pm_add_shot
 from core.database import entities
 from core.database import eve
 from core import settings
-from core import file_path
 from core.models import ListModel
 
 import houdini_launcher
 
-
-# TODO: Change project folder structure: scenes: assets (chars, env, props, fx) shots (anim, render, lay, lookdev) !!!
 
 def build_project_root(project_name):
     """Build project root folder string"""
@@ -691,6 +688,57 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         connection.commit()
 
+    def init_default_project(self, SQL_FILE_PATH, project_name):
+        """
+        Create Library project for Athena materials
+        :param SQL_FILE_PATH:
+        :return:
+        """
+
+        project = entities.Project(project_name)
+        project.houdini_build = '{0}'.format(settings.HOUDINI)
+        project.description = 'Eve default project for documentation and tutorials.'
+
+        connection = sqlite3.connect(SQL_FILE_PATH)
+        cursor = connection.cursor()
+
+        # Add "library" project to DB
+        cursor.execute("INSERT INTO projects VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":houdini_build,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'name': project.name,
+                        'houdini_build': project.houdini_build,
+                        'description': project.description})
+
+        connection.commit()
+        project.id = cursor.lastrowid  # Add database ID to the project object
+        connection.close()
+
+        # Add asset for the project
+        # asset = entities.Asset('U256', project.id)
+        #
+        # connection = sqlite3.connect(SQL_FILE_PATH)
+        # cursor = connection.cursor()
+        #
+        # cursor.execute("INSERT INTO assets VALUES ("
+        #                ":id,"
+        #                ":name,"
+        #                ":project_id,"
+        #                ":description)",
+        #
+        #                {'id': cursor.lastrowid,
+        #                 'name': asset.name,
+        #                 'project_id': asset.project_id,
+        #                 'description': asset.description})
+        #
+        # connection.commit()
+        # project.id = cursor.lastrowid  # Add database ID to the project object
+        # connection.close()
+
     def create_database(self):
         """
         Create database file with necessary tables
@@ -703,6 +751,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.init_database(connection, cursor)
         self.init_asset_types(connection, cursor)
         self.init_file_types(connection, cursor)
+        self.init_default_project(self.SQL_FILE_PATH, 'eve_example')
 
         connection.close()
 

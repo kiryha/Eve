@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_asset.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_asset.ui' applies.
 #
-# Created: Wed Feb 05 14:00:51 2020
+# Created: Fri Jun 12 14:44:19 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Asset(object):
     def setupUi(self, Asset):
         Asset.setObjectName("Asset")
-        Asset.resize(367, 250)
+        Asset.resize(367, 274)
         self.shotLayout = QtWidgets.QVBoxLayout(Asset)
         self.shotLayout.setContentsMargins(0, 0, 0, 0)
         self.shotLayout.setObjectName("shotLayout")
@@ -62,6 +62,9 @@ class Ui_Asset(object):
         self.linAssetPublish.setAlignment(QtCore.Qt.AlignCenter)
         self.linAssetPublish.setObjectName("linAssetPublish")
         self.shotLayout.addWidget(self.splitter_5)
+        self.pushButton = QtWidgets.QPushButton(Asset)
+        self.pushButton.setObjectName("pushButton")
+        self.shotLayout.addWidget(self.pushButton)
         self.label_2 = QtWidgets.QLabel(Asset)
         self.label_2.setObjectName("label_2")
         self.shotLayout.addWidget(self.label_2)
@@ -81,5 +84,6 @@ class Ui_Asset(object):
         self.label.setText(QtWidgets.QApplication.translate("Asset", "Asset Name", None, -1))
         self.label_4.setText(QtWidgets.QApplication.translate("Asset", "Asset Type", None, -1))
         self.label_6.setText(QtWidgets.QApplication.translate("Asset", "Published Version", None, -1))
+        self.pushButton.setText(QtWidgets.QApplication.translate("Asset", "Asset Configuration Manager", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("Asset", "Asset Description:", None, -1))
 
