@@ -89,6 +89,9 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
 
         scene_path = shot_file_path.version_control()
 
+        # Create new scene
+        hou.hipFile.clear()
+
         # Save file
         if scene_path:
             hou.hipFile.save(scene_path)

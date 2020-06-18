@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>120</height>
+    <width>360</width>
+    <height>187</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,35 +19,104 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <widget class="QLabel" name="label">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Sequence : Shot</string>
+      </property>
+     </widget>
      <widget class="QComboBox" name="boxSequence"/>
      <widget class="QComboBox" name="boxShot"/>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="btnCreateAnimationScene">
+    <widget class="QSplitter" name="splitter_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QPushButton" name="btnCreateRenderScene">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Create Render Scene</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOpenRenderScene">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Open Render Scene</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QPushButton" name="btnCreateAnimationScene">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Create Animation Scene</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOpenAnimationScene">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Open Animation Scene</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton">
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>35</height>
+       <height>45</height>
       </size>
      </property>
      <property name="text">
-      <string>Create Animation Scene</string>
+      <string>Publish Current Scene</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="btnCreateRenderScene">
-     <property name="minimumSize">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>0</width>
-       <height>35</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
-     <property name="text">
-      <string>Create Render Scene</string>
-     </property>
-    </widget>
+    </spacer>
    </item>
   </layout>
  </widget>

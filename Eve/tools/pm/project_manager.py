@@ -108,7 +108,6 @@ def build_folder_structure():
                 ['render', SHOTS],
                 ['scenes', [
                     ['ASSETS', ASSETS],
-                    ['LOOKDEV', TYPES],
                     ['SHOTS', [
                         ['ANIMATION', SHOTS],
                         ['LAYOUT', SHOTS],

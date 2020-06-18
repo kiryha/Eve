@@ -79,6 +79,7 @@ class EveFilePath:
         # DEFINE STRINGS
         self.file_name_template = '{0}_{1}_{2}.{3}'
         self.file_name_sequence_template = '{0}_{1}_{2}.{3}.{4}'
+        self.sequence_token = '%03d'
         self.asset_root = '{0}/PROD/3D/scenes/ASSETS'.format(self.project_root)
         self.shot_root = '{0}/PROD/3D/scenes/SHOTS'.format(self.project_root)
         self.render_3d_root = '{0}/PROD/3D/images'.format(self.project_root)
@@ -103,20 +104,62 @@ class EveFilePath:
 
     # Parsing string file paths
     def set_path(self, file_path):
+
         self.path = file_path
         self.analyze_file_path()
+
+    def print_file_path(self):
+
+        print 'EveFilePath.type = ', self.type
+        print 'EveFilePath.path = ', self.path
+        print 'EveFilePath.name = ', self.name
+        print 'EveFilePath.location = ', self.location
+        print 'EveFilePath.prefix = ', self.prefix
+        print 'EveFilePath.file_version = ', self.file_version
+        print 'EveFilePath.folder_version = ', self.folder_version
+        print 'EveFilePath.code = ', self.code
+        print 'EveFilePath.base = ', self.base
+        print 'EveFilePath.extension = ', self.extension
+
+    def detect_path_type(self):
+        """
+        Detect if path type is:
+            PATH =      S:/location/code_name_001.mb
+            SEQUENCE =  S:/location/code_name_001.001.mb
+            LOCATION =  S:/location/
+
+        :return:
+        """
+
+        part_length = len(self.path.split('/')[-1].split('.'))  # ['code_name_001', '001', 'mb']
+
+        if part_length == 1:
+            self.type = 'location'
+        elif part_length == 2:
+            self.type = 'path'
+        elif part_length == 3:
+            self.type = 'sequence'
+        else:
+            print '>> ERROR! Can`t detect the file type of the path = {}'.format(self.path)
 
     def rebuild_path(self):
         '''
         Record new PATH after modifications
         '''
 
-        if self.folder_version:
-            # Replace FOLDER VERSION in location with a new version
-            location = self.location
-            self.location = '{0}{1}/'.format(location[:-4], self.folder_version)
+        if self.type == 'path':
+            if self.folder_version:
+                # Replace FOLDER VERSION in location with a new version
+                location = self.location
+                self.location = '{0}{1}'.format(location[:-3], self.folder_version)
 
-        self.path = '{0}{1}_{2}.{3}'.format(self.location, self.code, self.file_version, self.extension)
+            self.path = '{0}/{1}_{2}.{3}'.format(self.location, self.code, self.file_version, self.extension)
+
+        if self.type == 'sequence':
+            self.path = '{0}/{1}_{2}.{3}.{4}'.format(self.location, self.code, self.file_version, self.sequence_token, self.extension)
+
+        if self.type == 'location':
+            self.path = '{0}/{1}'.format(self.location, self.folder_version)
 
     def build_file_base(self, parts):
         ''' Calculate <file_base> part of the file name '''
@@ -156,6 +199,8 @@ class EveFilePath:
         self.base = file_base
         self.extension = file_extension
 
+        self.print_file_path()
+
     def analyze_file_path(self):
         '''
         Disassemble string file path into components
@@ -164,24 +209,36 @@ class EveFilePath:
 
         file_path = self.path
 
-        file_name = file_path.split('/')[-1]
-        file_location = file_path.replace('{}'.format(file_name), '')
+        # Detect TYPE
+        if not self.type:
+            self.detect_path_type()
 
-        # Check if file path has a FOLDER VERSION
-        folder_version = None
-        folder_name = file_location.split('/')[-2]
-        if len(folder_name) == 3:
-            try:
-                int(folder_name)
-                folder_version = folder_name
-            except:
-                pass
+        if self.type == 'path' or self.type == 'sequence':
+            file_name = file_path.split('/')[-1]
+            file_location = file_path.replace('/{}'.format(file_name), '')
 
-        self.name = file_name
-        self.location = file_location
-        self.folder_version = folder_version
+            # Check if file path has a FOLDER VERSION
+            folder_version = None
+            folder_name = file_location.split('/')[-1]
+            if len(folder_name) == 3:
+                try:
+                    int(folder_name)
+                    folder_version = folder_name
+                except:
+                    pass
 
-        self.analyze_file_name()
+            self.name = file_name
+            self.location = file_location
+            self.folder_version = folder_version
+
+            self.analyze_file_name()
+
+        elif self.type == 'location':
+            self.location = self.path[:-4]
+            self.folder_version = self.path.split('/')[-1]
+
+        else:
+            print '>>>> ERROR! Unknown path type for path = {}'.format(self.path)
 
     def build_next_file_version(self):
         '''
@@ -201,16 +258,43 @@ class EveFilePath:
         :return: integer, maximum existing version
         '''
 
-        # Get list of existing versions of file
-        list_existed = glob.glob('{0}{1}_*.{2}'.format(self.location, self.code, self.extension))
+        # # Get list of existing versions of file
+        # list_existed = glob.glob('{0}{1}_*.{2}'.format(self.location, self.code, self.extension))
+        #
+        # list_versions = []
+        # for file_path in list_existed:
+        #     at_file = EveFilePath(file_path)
+        #     list_versions.append(int(at_file.file_version))
+        # last_version = max(list_versions)
+        #
+        # return last_version
 
         list_versions = []
-        for file_path in list_existed:
-            at_file = EveFilePath(file_path)
-            list_versions.append(int(at_file.file_version))
+        if self.type == 'path':
+            # Get list of existing versions of FILES
+            list_existed = glob.glob('{0}/{1}_*.{2}'.format(self.location, self.code, self.extension))
+            list_existed = [name.replace('\\', '/') for name in list_existed]
+
+            for file_path in list_existed:
+                at_file = EveFilePath(file_path)
+                list_versions.append(int(at_file.file_version))
+
+        if self.type == 'location':
+            # Get list of existing versions of FOLDERS
+            list_existed = glob.glob('{0}/*'.format(self.location))
+            # Filter non-version folder (by length) and fix slashes
+            list_existed = [name.replace('\\', '/') for name in list_existed if len(name.split('\\')[-1]) == 3]
+
+            for file_path in list_existed:
+                at_file = EveFilePath(file_path)
+                list_versions.append(int(at_file.folder_version))
+
         last_version = max(list_versions)
 
-        return last_version
+        if last_version:
+            return last_version
+        else:
+            print '>> ERROR! Calculating last version fails.'
 
     def build_latest_file_version(self):
         '''
@@ -252,7 +336,7 @@ class EveFilePath:
         file_path = '{0}/RENDER/{1}/{2}/{3}'.format(self.shot_root, sequence_name, shot_name, file_name)
         self.type = 'path'
 
-        print 'build_path_asset_hip [file_path] = ', file_path
+        print 'build_shot_render [file_path] = ', file_path
 
         self.set_path(file_path)
 
@@ -271,7 +355,12 @@ class EveFilePath:
             self.build_latest_file_version()
 
             # Ask user which version to save
-            answer = SNV(original_path.split('/')[-1], self.file_version).exec_()
+            if self.type == 'path' or self.type == 'sequence':
+                message = original_path.split('/')[-1]
+            else:
+                message = original_path
+
+            answer = SNV(message, self.file_version).exec_()
 
             if answer == 2:  # Overwrite
                 self.set_path(original_path)

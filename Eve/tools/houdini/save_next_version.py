@@ -6,6 +6,8 @@ Save next version of input file
 from core import file_path
 import hou
 
+reload(file_path)
+
 def save_next_version():
 
     scene_path = hou.hipFile.path()

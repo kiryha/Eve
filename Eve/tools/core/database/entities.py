@@ -14,7 +14,6 @@ class Project:
 
 
 class Asset:
-
     asset_types = {
         'character':
             {'id': 1,
@@ -77,7 +76,6 @@ class AssetType:
 
 
 class EveFile:
-
     file_types = {
         'asset_hip':
             {'id': 1,
@@ -120,6 +118,21 @@ class EveFile:
         self.type = file_type_id
         self.source = source_id  # Source DB item id (asset, shot etc)
         self.snapshot = None
+        self.description = ''
+
+
+class Variation:
+    """  WIP  """
+    variation_types = {
+        'material': {},
+        'geometry': {},
+        'light': {},
+        'fx': {}}
+
+    def __init__(self, variation_type_id):
+        self.id = None
+        self.type = variation_type_id
+        self.value = None
         self.description = ''
 
 

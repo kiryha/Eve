@@ -2,6 +2,17 @@
 Asset properties object.
 Drive each asset properties and configurations
 
+Configuration setup. WIP
+Asset variations of such type:
+    - material (texture)
+    - geometry
+    - light
+    - fx
+
+    CONTAIN: name | value
+
+Asset configuration:
+    CONTAIN: config_name | variation | value
 """
 
 # TODO: design asset configuration
@@ -21,8 +32,6 @@ class AssetData:
     def init_asset(self):
 
         self.asset = self.get_asset(self.asset_id)
-        # self.get_configs()
-        # self.get_variants()
 
     def get_asset(self, asset_id):
 
