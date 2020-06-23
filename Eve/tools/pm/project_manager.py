@@ -22,7 +22,7 @@ from ui import ui_shot_properties
 from ui import ui_pm_add_shot
 
 from core.database import entities
-from core.database import eve
+from core.database import eve_data
 from core import settings
 from core.models import ListModel
 
@@ -61,6 +61,7 @@ def build_folder_structure():
         ['CHARACTERS', []],
         ['ENVIRONMENTS', []],
         ['PROPS', []],
+        ['STATICS', []],
         ['FX', []]
     ]
     # Types structure
@@ -327,6 +328,7 @@ class AddAsset(QtWidgets.QDialog, ui_pm_add_asset.Ui_AddAsset):
         asset_name = self.asset_ui.linAssetName.text()
         asset_type_index = self.asset_ui.comAssetType.model().index(self.asset_ui.comAssetType.currentIndex(), 0)
         asset_type_id = asset_type_index.data(QtCore.Qt.UserRole + 1)
+        print 'asset_type_id = ', asset_type_id
         # asset_publish = self.asset_ui.linHDAName.text()
         asset_description = self.asset_ui.txtDescription.toPlainText()
 
@@ -464,7 +466,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
             if not os.path.exists(os.path.dirname(self.SQL_FILE_PATH)):
                 os.makedirs(os.path.dirname(self.SQL_FILE_PATH))
             self.create_database()
-        self.eve_data = eve.EveData(self.SQL_FILE_PATH)
+        self.eve_data = eve_data.EveData(self.SQL_FILE_PATH)
         self.model_projects = ListModel(self.eve_data.projects)
         self.model_assets = None
         self.model_sequences = None
@@ -476,7 +478,6 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.selected_asset = None
         self.selected_sequence = None
         self.selected_shot = None
-        self.asset_type_string = None
 
         # Load ADD ENTITY classes
         self.AP = AddProject(self)
@@ -847,8 +848,8 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.asset_properties_ui.asset_ui.comAssetType.setModel(model_asset_types)
         # Find AssetType string by database index
         # !!! Probably wrong implementation of model data! and can be done via ListModel() !!!!!
-        self.eve_data.get_asset_type_string(asset.type)
-        self.asset_properties_ui.asset_ui.comAssetType.setCurrentText(self.asset_type_string)
+        asset_type_string = self.eve_data.get_asset_type_string(asset.type)
+        self.asset_properties_ui.asset_ui.comAssetType.setCurrentText(asset_type_string)
         self.asset_properties_ui.asset_ui.txtDescription.setText(asset.description)
 
     def init_sequence(self):

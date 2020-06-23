@@ -10,10 +10,12 @@ File Naming convention for filePath:
 <file_code_version> = <file_code>_<file_version>
 <file_code> = <file_prefix>_<file_base>
 
-Versions (for current file path string):
+Version definition:
+    - VERSION: current
     - NEXT: current + 1
     - LAST: maximum number of existing versions on HDD
     - LATEST: last + 1
+
 
 Eve can generate/analyze 3 types of path:
     - FILE PATH:      S:/location/code_name_001.mb
@@ -199,7 +201,7 @@ class EveFilePath:
         self.base = file_base
         self.extension = file_extension
 
-        self.print_file_path()
+        # self.print_file_path()
 
     def analyze_file_path(self):
         '''
@@ -308,6 +310,16 @@ class EveFilePath:
 
         self.rebuild_path()
 
+    def build_last_file_version(self):
+        """
+        Create LAST (existing on HDD) version of provided file.
+        :return:
+        """
+
+        latest_version = self.calculate_last_version()
+        self.file_version = '{0:03d}'.format(latest_version)
+        self.rebuild_path()
+
     # Build string paths for database.EveFile.file_types
     def build_path_asset_hip(self, file_type, asset_type, asset_name, version):
         """
@@ -318,7 +330,7 @@ class EveFilePath:
         """
 
         file_prefix = file_type['prefix']
-        asset_folder = '{0}S'.format(asset_type['name']).upper()
+        asset_folder = '{0}S'.format(asset_type).upper()
         file_name = self.file_name_template.format(file_prefix, asset_name, version, settings.HIP)
         file_path = '{0}/{1}/{2}/{3}'.format(self.asset_root, asset_folder, asset_name, file_name)
         self.type = 'path'

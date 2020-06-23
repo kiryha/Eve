@@ -7,6 +7,7 @@
 
   <toolshelf name="eve" label="EVE">
     <memberTool name="snv"/>
+    <memberTool name="tool_1"/>
     <memberTool name="shm"/>
   </toolshelf>
 

@@ -5,7 +5,7 @@ from ui import ui_shot_manager
 
 from core import settings
 from core.database.entities import EveFile
-from core.database import eve
+from core.database import eve_data
 from core.models import ListModel
 from core import file_path
 
@@ -33,10 +33,13 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
 
         self.init_shot_manager()
 
-        # Setup UI functionality
+        # Sequence-shot UI relation
         self.boxSequence.currentIndexChanged.connect(self.init_shots)
         self.boxShot.currentIndexChanged.connect(self.init_shot)
+
+        # Setup UI functionality
         self.btnCreateRenderScene.clicked.connect(self.run_create_render_scene)
+        self.btnOpenRenderScene.clicked.connect(self.run_open_render_scene)
 
     def init_shot_manager(self):
         """
@@ -44,7 +47,7 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         :return:
         """
 
-        self.eve_data = eve.EveData(self.SQL_FILE_PATH)
+        self.eve_data = eve_data.EveData(self.SQL_FILE_PATH)
         self.project = self.eve_data.get_project_by_name(self.project_name)
 
         self.eve_data.get_project_sequences(self.project)
@@ -78,7 +81,8 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         shot_id = model_index.data(QtCore.Qt.UserRole + 1)
         shot = self.eve_data.get_shot(shot_id)
 
-        self.selected_shot = self.eve_data.get_shot(shot.id)
+        if shot:
+            self.selected_shot = self.eve_data.get_shot(shot.id)
 
     def run_create_render_scene(self):
 
@@ -88,6 +92,8 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         shot_file_path.build_path_shot_render(file_type, self.selected_sequence.name, self.selected_shot.name, '001')
 
         scene_path = shot_file_path.version_control()
+        if not scene_path:
+            return
 
         # Create new scene
         hou.hipFile.clear()
@@ -95,6 +101,24 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         # Save file
         if scene_path:
             hou.hipFile.save(scene_path)
+
+    def run_open_render_scene(self):
+        """
+        Open LAST existing scene version.
+
+        WIP. Need to implement publishing and open user-defined or last published version.
+        :return:
+        """
+
+        # Build string PATH to file
+        file_type = EveFile.file_types['shot_render']
+        shot_file_path = file_path.EveFilePath()
+        shot_file_path.build_path_shot_render(file_type, self.selected_sequence.name, self.selected_shot.name, '001')
+        shot_file_path.build_last_file_version()
+
+        hou.hipFile.load(shot_file_path.path)
+
+
 
 def run_shot_manager():
     shot_manager = ShotManager()
