@@ -30,7 +30,7 @@
        <string>Filter Asset Type:</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="boxAssetTypeFilter"/>
+     <widget class="QComboBox" name="comAssetType"/>
     </widget>
    </item>
    <item>
@@ -49,20 +49,36 @@
        <string>Asset Name:</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="boxAssetName"/>
+     <widget class="QComboBox" name="comAssetName"/>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="btnAssetCrete">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>35</height>
-      </size>
+    <widget class="QSplitter" name="splitter_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="text">
-      <string>Create Asset Scene</string>
-     </property>
+     <widget class="QPushButton" name="btnAssetCrete">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Create Asset Scene</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAssetOpen">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Open Asset Scene</string>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

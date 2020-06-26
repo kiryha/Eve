@@ -20,11 +20,11 @@ Asset configuration:
 import sqlite3
 import entities
 
+
 class AssetData:
     def __init__(self, SQL_FILE_PATH, asset_id):
         # Load database
         self.SQL_FILE_PATH = SQL_FILE_PATH
-        print self.SQL_FILE_PATH
         self.asset_id = asset_id
 
         # Data attributes
