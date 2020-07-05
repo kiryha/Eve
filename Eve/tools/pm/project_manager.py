@@ -24,7 +24,7 @@ from ui import ui_pm_add_shot
 from core.database import entities
 from core.database import eve_data
 from core import settings
-from core.models import ListModel
+from core import models
 
 import houdini_launcher
 
@@ -162,7 +162,7 @@ class LinkAssets(QtWidgets.QDialog, ui_link_assets.Ui_LinkAssets):
         # self.asset_ui.txtDescription.clear()
         #
         # Add assets to ui
-        self.model_assets = ListModel(self.project_assets)
+        self.model_assets = models.ListModel(self.project_assets)
         self.listAssets.setModel(self.model_assets)
 
     def link_asset(self):
@@ -316,7 +316,7 @@ class AddAsset(QtWidgets.QDialog, ui_pm_add_asset.Ui_AddAsset):
         self.asset_ui.txtDescription.clear()
 
         # Add asset types to ui
-        self.model_asset_types = ListModel(self.asset_types)
+        self.model_asset_types = models.ListModel(self.asset_types)
         self.asset_ui.comAssetType.setModel(self.model_asset_types)
 
     def add_asset(self):
@@ -328,7 +328,6 @@ class AddAsset(QtWidgets.QDialog, ui_pm_add_asset.Ui_AddAsset):
         asset_name = self.asset_ui.linAssetName.text()
         asset_type_index = self.asset_ui.comAssetType.model().index(self.asset_ui.comAssetType.currentIndex(), 0)
         asset_type_id = asset_type_index.data(QtCore.Qt.UserRole + 1)
-        print 'asset_type_id = ', asset_type_id
         # asset_publish = self.asset_ui.linHDAName.text()
         asset_description = self.asset_ui.txtDescription.toPlainText()
 
@@ -467,7 +466,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
                 os.makedirs(os.path.dirname(self.SQL_FILE_PATH))
             self.create_database()
         self.eve_data = eve_data.EveData(self.SQL_FILE_PATH)
-        self.model_projects = ListModel(self.eve_data.projects)
+        self.model_projects = models.ListModel(self.eve_data.projects)
         self.model_assets = None
         self.model_sequences = None
         self.model_shots = None
@@ -790,7 +789,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.eve_data.get_project_sequences(project)
 
         # Clear SHOTS in UI
-        self.listShots.setModel(ListModel([]))
+        self.listShots.setModel(models.ListModel([]))
 
         # Fill Project Properties widget
         project_root = build_project_root(project.name)
@@ -804,10 +803,10 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.project_properties_ui.project_ui.txtDescription.setText(project.description)
 
         # FILL ASSET and SEQUENCE WIDGETS
-        self.model_assets = ListModel(self.eve_data.project_assets)
+        self.model_assets = models.ListModel(self.eve_data.project_assets)
         self.listAssets.setModel(self.model_assets)
 
-        self.model_sequences = ListModel(self.eve_data.project_sequences)
+        self.model_sequences = models.ListModel(self.eve_data.project_sequences)
         self.listSequences.setModel(self.model_sequences)
 
         # Enable/disable UI buttons depending on project existence
@@ -844,7 +843,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.asset_properties_ui.asset_ui.linProjectName.setText(self.selected_project.name)
         self.asset_properties_ui.asset_ui.linAssetName.setText(asset.name)
 
-        model_asset_types = ListModel(self.eve_data.asset_types)
+        model_asset_types = models.ListModel(self.eve_data.asset_types)
         self.asset_properties_ui.asset_ui.comAssetType.setModel(model_asset_types)
         # Find AssetType string by database index
         # !!! Probably wrong implementation of model data! and can be done via ListModel() !!!!!
@@ -870,7 +869,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
         self.selected_sequence = sequence
         # and shot
         self.eve_data.get_sequence_shots(sequence.id)
-        self.model_shots = ListModel(self.eve_data.sequence_shots)
+        self.model_shots = models.ListModel(self.eve_data.sequence_shots)
         self.listShots.setModel(self.model_shots)
 
         # Fill SEQUENCE WIDGET

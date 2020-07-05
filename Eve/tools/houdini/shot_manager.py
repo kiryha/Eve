@@ -4,12 +4,14 @@ from PySide2 import QtCore, QtWidgets
 from ui import ui_shot_manager
 
 from core import settings
-from core.database.entities import EveFile
+from core.database import entities
 from core.database import eve_data
-from core.models import ListModel
+from core import models
 from core import file_path
 
+
 reload(file_path)
+
 
 class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
     def __init__(self):
@@ -51,7 +53,7 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         self.project = self.eve_data.get_project_by_name(self.project_name)
 
         self.eve_data.get_project_sequences(self.project)
-        self.model_sequences = ListModel(self.eve_data.project_sequences)
+        self.model_sequences = models.ListModel(self.eve_data.project_sequences)
 
         self.boxSequence.setModel(self.model_sequences)
 
@@ -67,7 +69,7 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         sequence_id = model_index.data(QtCore.Qt.UserRole + 1)
 
         self.eve_data.get_sequence_shots(sequence_id)
-        self.model_shots = ListModel(self.eve_data.sequence_shots)
+        self.model_shots = models.ListModel(self.eve_data.sequence_shots)
 
         self.selected_sequence = self.eve_data.get_sequence(sequence_id)
 
@@ -87,7 +89,7 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
     def run_create_render_scene(self):
 
         # Build string PATH to file
-        file_type = EveFile.file_types['shot_render']
+        file_type = entities.EveFile.file_types['shot_render']
         shot_file_path = file_path.EveFilePath()
         shot_file_path.build_path_shot_render(file_type, self.selected_sequence.name, self.selected_shot.name, '001')
 
@@ -111,13 +113,12 @@ class ShotManager(QtWidgets.QDialog, ui_shot_manager.Ui_ShotManager):
         """
 
         # Build string PATH to file
-        file_type = EveFile.file_types['shot_render']
+        file_type = entities.EveFile.file_types['shot_render']
         shot_file_path = file_path.EveFilePath()
         shot_file_path.build_path_shot_render(file_type, self.selected_sequence.name, self.selected_shot.name, '001')
         shot_file_path.build_last_file_version()
 
         hou.hipFile.load(shot_file_path.path)
-
 
 
 def run_shot_manager():

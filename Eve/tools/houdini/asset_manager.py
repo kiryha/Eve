@@ -4,10 +4,10 @@ from PySide2 import QtCore, QtWidgets
 from ui import ui_asset_manager
 
 from core import settings
-from core.database.entities import EveFile, Asset
+from core.database import entities
 from core.database import eve_data
 from core.database import asset_data
-from core.models import ListModel
+from core import models
 from core import file_path
 
 
@@ -45,12 +45,12 @@ class AssetManager(QtWidgets.QDialog, ui_asset_manager.Ui_AssetManager):
         self.project = self.eve_data.get_project_by_name(self.project_name)
 
         # Fill Asset Types
-        model_asset_types = ListModel(self.eve_data.asset_types)
+        model_asset_types = models.ListModel(self.eve_data.asset_types)
         self.comAssetType.setModel(model_asset_types)
 
         # Fill Asset list in UI
         self.eve_data.get_project_assets(self.project)
-        self.model_assets = ListModel(self.eve_data.project_assets)
+        self.model_assets = models.ListModel(self.eve_data.project_assets)
         self.comAssetName.setModel(self.model_assets)
 
     def get_asset_data(self):
@@ -66,7 +66,7 @@ class AssetManager(QtWidgets.QDialog, ui_asset_manager.Ui_AssetManager):
 
         # Create file path string
         asset_file_path = file_path.EveFilePath()
-        file_type = EveFile.file_types['asset_hip']
+        file_type = entities.EveFile.file_types['asset_hip']
         asset_type = self.asset_data.asset_type_dic['name']
         asset_file_path.build_path_asset_hip(file_type, asset_type, self.asset_data.asset.name, '001')
         scene_path = asset_file_path.version_control()
@@ -83,7 +83,7 @@ class AssetManager(QtWidgets.QDialog, ui_asset_manager.Ui_AssetManager):
         self.get_asset_data()
 
         asset_file_path = file_path.EveFilePath()
-        file_type = EveFile.file_types['asset_hip']
+        file_type = entities.EveFile.file_types['asset_hip']
         asset_type = self.asset_data.asset_type_dic['name']
         asset_file_path.build_path_asset_hip(file_type, asset_type, self.asset_data.asset.name, '001')
         asset_file_path.build_last_file_version()
