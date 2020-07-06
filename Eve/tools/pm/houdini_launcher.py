@@ -81,6 +81,8 @@ def run_houdini(eve_root, projects_root, HOUDINI, project_name, script=None, id=
     # os.environ['HOUDINI_OTLSCAN_PATH'] = get_hda_path(root_3d)
     # Houdini path
     os.environ['HOUDINI_PATH'] = '{0}/tools/houdini/settings;&'.format(eve_root)
+    # Custom vex modules
+    os.environ['HOUDINI_VEX_PATH'] = '{0}/tools/houdini/vex;&'.format(eve_root)
     # Path to custom python tools
     # os.environ['PYTHONPATH'] = '{0}/tools/core;{0}/tools/houdini;&'.format(eve_root)  ### !!!!!!!!!!!!!!!!!!!!!!! WIP
     os.environ['PYTHONPATH'] = '{0}/tools'.format(eve_root)  # from houdini import create_asset
