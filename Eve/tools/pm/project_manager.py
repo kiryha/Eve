@@ -897,7 +897,7 @@ class ProjectManager(QtWidgets.QMainWindow,  ui_pm_main.Ui_ProjectManager):
 
         # FILL SHOT ASSETS WIDGET
         self.eve_data.get_shot_assets(shot_id)
-        self.model_shot_assets = ListModel(self.eve_data.shot_assets)
+        self.model_shot_assets = models.ListModel(self.eve_data.shot_assets)
         self.shot_properties_ui.shot_ui.listAssets.setModel(self.model_shot_assets)
 
         # Fill SHOT WIDGET

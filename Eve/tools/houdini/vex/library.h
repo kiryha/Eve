@@ -16,5 +16,6 @@ function vector[] get_point_positions(){
 struct node{
     vector p;
     int n;
-    int branch;
+    int branch = 0;
+    float width = 1;
 }

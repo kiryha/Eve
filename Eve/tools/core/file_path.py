@@ -74,6 +74,20 @@ class SNV(QtWidgets.QDialog):
 
 
 class EveFilePath:
+    path_types = {
+        'location':
+            {'id': 1,
+             'name': 'location',
+             'description': 'S:/location/001'},
+        'path':
+            {'id': 2,
+             'name': 'path',
+             'description': 'S:/location/001/code_name_001.mb'},
+        'sequence':
+            {'id': 3,
+             'name': 'sequence',
+             'description': ' S:/location/001/code_name_001.001.mb'}}
+
     def __init__(self, file_path=None):
 
         # Environment set
