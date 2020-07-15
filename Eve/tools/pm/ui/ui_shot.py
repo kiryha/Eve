@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'E:\Eve\Eve\tools\pm\ui\ui_shot.ui',
 # licensing of 'E:\Eve\Eve\tools\pm\ui\ui_shot.ui' applies.
 #
-# Created: Thu Feb 06 10:51:23 2020
+# Created: Tue Jul 14 23:48:02 2020
 #      by: pyside2-uic  running on PySide2 5.9.0a1.dev1528389443
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,7 +45,7 @@ class Ui_Shot(object):
         self.splitter_8.setObjectName("splitter_8")
         self.label = QtWidgets.QLabel(self.splitter_8)
         self.label.setMinimumSize(QtCore.QSize(120, 0))
-        self.label.setMaximumSize(QtCore.QSize(85, 16777215))
+        self.label.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label.setObjectName("label")
         self.linShotName = QtWidgets.QLineEdit(self.splitter_8)
         self.linShotName.setAlignment(QtCore.Qt.AlignCenter)
@@ -56,6 +56,7 @@ class Ui_Shot(object):
         self.splitter_5.setObjectName("splitter_5")
         self.label_7 = QtWidgets.QLabel(self.splitter_5)
         self.label_7.setMinimumSize(QtCore.QSize(120, 0))
+        self.label_7.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label_7.setObjectName("label_7")
         self.linStartFrame = QtWidgets.QLineEdit(self.splitter_5)
         self.linStartFrame.setAlignment(QtCore.Qt.AlignCenter)
@@ -69,6 +70,7 @@ class Ui_Shot(object):
         self.splitter_6.setObjectName("splitter_6")
         self.label_8 = QtWidgets.QLabel(self.splitter_6)
         self.label_8.setMinimumSize(QtCore.QSize(120, 0))
+        self.label_8.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label_8.setObjectName("label_8")
         self.linWidth = QtWidgets.QLineEdit(self.splitter_6)
         self.linWidth.setAlignment(QtCore.Qt.AlignCenter)
@@ -82,6 +84,7 @@ class Ui_Shot(object):
         self.splitter_7.setObjectName("splitter_7")
         self.label_2 = QtWidgets.QLabel(self.splitter_7)
         self.label_2.setMinimumSize(QtCore.QSize(120, 0))
+        self.label_2.setMaximumSize(QtCore.QSize(120, 16777215))
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_2.setObjectName("label_2")
         self.splitter = QtWidgets.QSplitter(self.splitter_7)

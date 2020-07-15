@@ -27,8 +27,6 @@ Eve can generate/analyze 3 types of path:
 
 """
 
-# TODO: Handle sequences paths <file_name> = <file_code>_<file_version>.<frame_number>.<file_extension>
-# TODO: Handle location paths <file_name> = <file_location>
 
 import os
 import glob
